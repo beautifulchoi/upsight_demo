@@ -15,6 +15,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   QuestionFirebase questionFirebase = QuestionFirebase();
+  late String documentId;
 
   @override
   void initState() {
@@ -155,9 +156,25 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     onTap: () async {
                       await increaseViewsCount(searchBoardResult[index]);
+
+                      QuerySnapshot snapshot = await questionFirebase
+                          .questionReference
+                          .where('title', isEqualTo: searchBoardResult[index].title)
+                          .where(
+                          'content', isEqualTo: searchBoardResult[index].content)
+                          .where(
+                          'author', isEqualTo: searchBoardResult[index].author)
+                          .where('create_date',
+                          isEqualTo: searchBoardResult[index].create_date)
+                          .get();
+
+                      if (snapshot.docs.isNotEmpty) {
+                        documentId = snapshot.docs.first.id;
+                      }
+
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (BuildContext context) => DetailScreen(data: searchBoardResult[index])),
+                            builder: (BuildContext context) => DetailScreen(data: searchBoardResult[index], dataId: documentId,),),
                       );
                     },
                   );

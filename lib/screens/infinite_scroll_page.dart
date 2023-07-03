@@ -24,6 +24,8 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   bool isLastPage = false;
   ScrollController _scrollController = ScrollController();
 
+  late String documentId;
+
   @override
   void initState() {
     super.initState();
@@ -122,9 +124,24 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
       onTap: () async {
         await increaseViewsCount(question);
 
+        QuerySnapshot snapshot = await questionFirebase
+            .questionReference
+            .where('title', isEqualTo: question.title)
+            .where(
+            'content', isEqualTo: question.content)
+            .where(
+            'author', isEqualTo: question.author)
+            .where('create_date',
+            isEqualTo: question.create_date)
+            .get();
+
+        if (snapshot.docs.isNotEmpty) {
+          documentId = snapshot.docs.first.id;
+        }
+
         Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (BuildContext context) => DetailScreen(data: question)),
+              builder: (BuildContext context) => DetailScreen(data: question, dataId: documentId)),
         );
       },
     );

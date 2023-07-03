@@ -9,13 +9,15 @@ import 'package:intl/intl.dart';
 
 class DetailScreen extends StatefulWidget {
   final Question data;
-  DetailScreen({required this.data});
+  final String dataId;
+  DetailScreen({required this.data, required this.dataId});
 
   _DetailScreenState createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
   late Question questionData;
+  late String questionId;
   QuestionFirebase questionFirebase = QuestionFirebase();
 
   AnswerFirebase answerFirebase = AnswerFirebase();
@@ -23,22 +25,39 @@ class _DetailScreenState extends State<DetailScreen> {
   // String author = '';
   // String create_date = '';
   // String modify_date = '';
-  late List<Answer> answers;
+  QuerySnapshot? answer_snapshot;
 
   late String user;
   bool likeData = false;
 
   final _commentTextEditController = TextEditingController();
 
+  int answers_null_len = 0;
+
   @override
   void initState() {
     super.initState();
     questionData = widget.data;
+    questionId = widget.dataId;
     setState(() {
       questionFirebase.initDb();
       answerFirebase.initDb();
+      fetchData();
     });
     user = 'admin';
+  }
+
+  Future<void> fetchData() async {
+    answer_snapshot = await answerFirebase.answerReference
+        .where('question', isEqualTo: questionId)
+        .get();
+    setState(() {
+      answers_null_len = answer_snapshot!.docs.length;
+    });
+    //print(answer_snapshot!.docs);
+    print(answer_snapshot!.docs.length);
+
+    //print(answers_null_len);
   }
 
   @override
@@ -54,7 +73,7 @@ class _DetailScreenState extends State<DetailScreen> {
         backgroundColor: Colors.red,
         title: Text('상세보기'),
       ),
-      body: Container(
+      body: SingleChildScrollView(
         child: Column(
             children: <Widget>[
               // 아이콘, 작성자, datetime
@@ -261,9 +280,34 @@ class _DetailScreenState extends State<DetailScreen> {
                 thickness: 1,
               ),
               // 답변 목록
-              Center(
+              // Center(
+              //   child: Text('아직 작성된 답변이 없습니다'),
+              // ),
+
+              answers_null_len == 0
+                  ? Center(
                 child: Text('아직 작성된 답변이 없습니다'),
-              ),
+              )
+                  : ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: answer_snapshot!.docs.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    print(answer_snapshot!.docs[index]['content']);
+
+                    return ListTile(
+                      title: Text(answer_snapshot!.docs[index]['content']),
+                      subtitle: Text(answer_snapshot!.docs[index]['author']),
+                      trailing: Column(
+                        children: [
+                          Text(answer_snapshot!.docs[index]['create_date']),
+                          Text(answer_snapshot!.docs[index]['modify_date']),
+                        ],
+                      ),
+                    );
+                  }),
+
+
               Align(
                 child: Container(
                   color: Colors.purple,
@@ -299,15 +343,13 @@ class _DetailScreenState extends State<DetailScreen> {
                                   suffixIcon: IconButton(
                                     icon: Icon(Icons.send),
                                     onPressed: () {
-                                      String commentText = _commentTextEditController
-                                          .text;
+                                      String commentText = _commentTextEditController.text;
 
                                       Answer newAnswer = Answer(
+                                        question: questionId,
                                         content: commentText,
                                         author: 'guest',
-                                        create_date: DateFormat(
-                                            'yy/MM/dd/HH/mm/ss').format(
-                                            DateTime.now()),
+                                        create_date: DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
                                         modify_date: 'Null',
                                       );
                                       answerFirebase.addAnswer(newAnswer);
@@ -330,6 +372,7 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
   }
+}
 
 
       /*
@@ -500,7 +543,7 @@ class _DetailScreenState extends State<DetailScreen> {
        */
   //  );
   //}
-}
+
 
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:flutter/material.dart';

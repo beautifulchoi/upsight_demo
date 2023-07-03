@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:board_project/models/question.dart';
 
 class Answer {
+  late String question;
   late String content;
   late String author;
   late String create_date;
@@ -9,6 +10,7 @@ class Answer {
   late DocumentReference? reference;
 
   Answer({
+    required this.question,
     required this.content,
     required this.author,
     required this.create_date,
@@ -18,6 +20,7 @@ class Answer {
 
   Map<String, dynamic> toMap() {
     return {
+      'question': question,
       'content': content,
       'author': author,
       'create_date': create_date,
@@ -26,6 +29,7 @@ class Answer {
   }
 
   Answer.fromMap(Map<dynamic, dynamic>? map) {
+    question = map?['question'];
     content = map?['content'];
     author = map?['author'];
     create_date = map?['create_date'];
@@ -34,6 +38,7 @@ class Answer {
 
   Answer.fromSnapshot(DocumentSnapshot document) {
     Map<String, dynamic> map = document.data() as Map<String, dynamic>;
+    question = map['question'];
     content = map['content'];
     author = map['author'];
     create_date = map['create_date'];
