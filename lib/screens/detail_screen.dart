@@ -54,10 +54,7 @@ class _DetailScreenState extends State<DetailScreen> {
     setState(() {
       answers_null_len = answer_snapshot!.docs.length;
     });
-    //print(answer_snapshot!.docs);
     print(answer_snapshot!.docs.length);
-
-    //print(answers_null_len);
   }
 
   @override
@@ -280,10 +277,6 @@ class _DetailScreenState extends State<DetailScreen> {
                 thickness: 1,
               ),
               // 답변 목록
-              // Center(
-              //   child: Text('아직 작성된 답변이 없습니다'),
-              // ),
-
               answers_null_len == 0
                   ? Center(
                 child: Text('아직 작성된 답변이 없습니다'),
@@ -293,10 +286,52 @@ class _DetailScreenState extends State<DetailScreen> {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: answer_snapshot!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    print(answer_snapshot!.docs[index]['content']);
-
                     return ListTile(
-                      title: Text(answer_snapshot!.docs[index]['content']),
+                      title: Row(
+                        children: [
+                          Text(answer_snapshot!.docs[index]['content']),
+                          IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('삭제하기'),
+                                      content: Container(
+                                        child: Text('삭제하시겠습니까?'),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            child: Text('삭제'),
+                                            onPressed: () async {
+                                              QuerySnapshot snapshot = await answerFirebase.answerReference
+                                                  .where('question', isEqualTo: answer_snapshot!.docs[index]['question'])
+                                                  .where('content', isEqualTo: answer_snapshot!.docs[index]['content'])
+                                                  .where('create_date', isEqualTo: answer_snapshot!.docs[index]['create_date'])
+                                                  .get();
+                                              if (snapshot.docs.isNotEmpty) {
+                                                String documentId = snapshot.docs.first.id;
+                                                await answerFirebase.answerReference.doc(documentId).delete();
+                                                // 나중에 고쳐야함!!!!!!!!!!!!!!!!
+                                                Navigator.pushNamed(context, '/test');
+                                              }
+                                            }),
+                                        TextButton(
+                                          child: Text('취소'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                            ),
+                          ),
+                        ],
+                      ),
                       subtitle: Text(answer_snapshot!.docs[index]['author']),
                       trailing: Column(
                         children: [
@@ -306,8 +341,6 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     );
                   }),
-
-
               Align(
                 child: Container(
                   color: Colors.purple,
@@ -353,6 +386,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                         modify_date: 'Null',
                                       );
                                       answerFirebase.addAnswer(newAnswer);
+
+                                      Navigator.pushNamed(context, '/test');
                                     },
                                   ),
                                   isDense: true,
@@ -373,7 +408,6 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
-
 
       /*
       body: Container(

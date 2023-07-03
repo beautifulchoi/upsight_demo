@@ -162,6 +162,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.red,
         title: Text('게시판'),
         actions: <Widget>[
