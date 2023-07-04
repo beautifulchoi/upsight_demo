@@ -206,7 +206,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
       appBar: searchPageHeader(),
       body: searchResults == null ? displayNoSearchResultScreen() : displayBoardsFountScreen(),
     );

@@ -26,6 +26,8 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
   late String documentId;
 
+  bool isCreateSort = true;
+
   @override
   void initState() {
     super.initState();
@@ -183,7 +185,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -202,20 +204,45 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           }
         },
       ),
-      body: ListView.builder(
-        itemCount: questions.length + (isLastPage ? 0 : 1),
-        itemBuilder: (BuildContext context, int index) {
-          if (index == questions.length) {
-            if (isLoading) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return SizedBox.shrink();
-            }
-          }
-          return _buildItemWidget(questions[index]);
-        },
-        controller: _scrollController,
-      ),
+      body: Column(
+        children: [
+          TextButton.icon(
+            icon: RotatedBox(
+              quarterTurns: 1,
+              child: Icon(Icons.compare_arrows, size: 28),
+            ),
+            label: Text(
+              isCreateSort ? '최신순' : '조회순',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+              setState(() {
+                isCreateSort = !isCreateSort;
+              });
+            },
+          ),
+          Expanded(
+              child:
+              ListView.builder(
+                itemCount: questions.length + (isLastPage ? 0 : 1),
+                itemBuilder: (BuildContext context, int index) {
+                  isCreateSort ? questions.sort((a, b) => b.create_date.compareTo(a.create_date)) : questions.sort((a, b) => b.views_count.compareTo(a.views_count));
+
+                  if (index == questions.length) {
+                    if (isLoading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  }
+                  return _buildItemWidget(questions[index]);
+                },
+                controller: _scrollController,
+              ),
+
+          )
+        ],
+      )
     );
   }
 }
