@@ -166,15 +166,11 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         // 게시글 중 하나를 눌렀을 경우 해당 게시글의 조회수 증가
         await increaseViewsCount(question);
 
-        QuerySnapshot snapshot = await questionFirebase
-            .questionReference
+        QuerySnapshot snapshot = await questionFirebase.questionReference
             .where('title', isEqualTo: question.title)
-            .where(
-            'content', isEqualTo: question.content)
-            .where(
-            'author', isEqualTo: question.author)
-            .where('create_date',
-            isEqualTo: question.create_date)
+            .where('content', isEqualTo: question.content)
+            .where('author', isEqualTo: question.author)
+            .where('create_date', isEqualTo: question.create_date)
             .get();
 
         if (snapshot.docs.isNotEmpty) {

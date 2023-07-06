@@ -19,8 +19,10 @@ class _CreateScreenState extends State<CreateScreen> {
   String content = '';
   String author = '';
   String create_date = '';
-  String modify_date = '';
+  String modify_date = 'Null';
   String category = '';
+  int views_count = 0;
+  bool isLikeClicked = false;
 
   // 임의로 지정할 user name, 추후 user model과 연결해야해서 DB 연결시켜야함
   late String user;
@@ -90,10 +92,10 @@ class _CreateScreenState extends State<CreateScreen> {
                     content: content,
                     author: user,
                     create_date: DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
-                    modify_date: 'Null',
+                    modify_date: modify_date,
                     category: category,
-                    views_count: 0,
-                    isLikeClicked: false,
+                    views_count: views_count,
+                    isLikeClicked: isLikeClicked,
                   );
                   questionFirebase.addQuestion(newQuestion).then((value) {
                     // 새로 생성된 데이터는 이전 화면인 게시물 list screen으로 전환되면서 전달됨(현재 infinite_scroll_page)

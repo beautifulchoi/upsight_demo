@@ -2,7 +2,7 @@
 게시글(question)의 상세 화면을 보여주는 page : 좋아요, 댓글 기능 구현
  */
 
-import 'package:board_project/providers/answer.firestore.dart';
+import 'package:board_project/providers/answer_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
@@ -224,7 +224,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                           );
                                         });
                                   } else {
-                                    // 현재 user와 해당 게시글의 작성자가 같지 않다면 수정을 할 수 없게 함
+                                    // 현재 user와 해당 게시글의 작성자가 같지 않다면 삭제를 할 수 없게 함
                                     showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
