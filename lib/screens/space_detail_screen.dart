@@ -34,6 +34,9 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
   // 해당 space의 wall 목록 길이 초기화
   int walls_null_len = 0;
 
+  // 벽면 테이블의 헤더행
+  List<String> wall_col = ["벽면", "태그", "내용", "수정"];
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +44,7 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
     spaceData = widget.data;
     // 전달받은 spaceId 데이터 저장
     spaceId = widget.dataId;
+
     setState(() {
       wallFirebase.initDb();
       // 해당 space의 wall 데이터의 snapshot 저장
@@ -58,6 +62,48 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
       // 해당 space의 wall 목록 길이 저장
       walls_null_len = wall_snapshot!.docs.length;
     });
+  }
+
+  // 벽면 테이블 생성 함수
+  Widget _getDataTable() {
+    return DataTable(
+      columnSpacing: 20,
+      columns: _getColumns(),
+      rows: _getRows(),
+    );
+  }
+
+  // 벽면 테이블 행 생성 함수
+  List<DataColumn> _getColumns() {
+    List<DataColumn> dataColumn = [];
+    for (String c in wall_col) {
+      dataColumn.add(DataColumn(label: Text(c)));
+    }
+    return dataColumn;
+  }
+
+  // 벽면 테이블 열 생성 함수
+  List<DataRow> _getRows() {
+    // wall의 데이터 저장
+    List<DocumentSnapshot> sortedDocs = wall_snapshot!.docs;
+    // wall 데이터들을 최신순으로 sort
+    sortedDocs.sort((a, b) {
+      return a['create_date'].compareTo(b['create_date']);
+    });
+
+    // 최종적으로 반환할 cell이 저장된 list
+    List<DataRow> dataRow = [];
+    for (var i = 0; i < wall_snapshot!.docs.length; i++) {
+      List<DataCell> cells = [];
+
+      cells.add(DataCell(Text(sortedDocs[i]['number'].toString())));
+      cells.add(DataCell(Text(sortedDocs[i]['tag'])));
+      cells.add(DataCell(Text(sortedDocs[i]['content'])));
+      cells.add(DataCell(Text(sortedDocs[i]['modify_date'])));
+
+      dataRow.add(DataRow(cells: cells));
+    }
+    return dataRow;
   }
 
   // 위젯을 만들고 화면에 보여주는 함수
@@ -199,34 +245,44 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
                 alignment: Alignment.center,
                 // 벽면 목록이 null일 경우
                 child: walls_null_len == 0
-                    ? Text(
-                    '생성된 벽면이 없습니다', textAlign: TextAlign.center,)
+                    ? Text('생성된 벽면이 없습니다', textAlign: TextAlign.center,)
                 // 벽면 목록이 null이 아닐 경우
-                    : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: wall_snapshot!.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      // wall의 데이터 저장
-                      List<DocumentSnapshot> sortedDocs = wall_snapshot!.docs;
-                      // wall 데이터들을 최신순으로 sort
-                      sortedDocs.sort((a, b) {
-                        return a['create_date'].compareTo(b['create_date']);
-                      });
-                      DocumentSnapshot wallData = sortedDocs[index];
+                    : SingleChildScrollView(
+                  child: _getDataTable(),
+                ),
+              )
 
-                      return ListTile(
-                        title: Text(wallData['number'].toString()),
-                        subtitle: Column(
-                          children: [
-                            Text(wallData['tag']),
-                            Text(wallData['content']),
-                          ],
-                        ),
-                        trailing: Text(wallData['create_date']),
-                      );
-                    })
+                // : ListView.builder(
+                //     shrinkWrap: true,
+                //     itemCount: wall_snapshot!.docs.length,
+                //     itemBuilder: (BuildContext context, int index) {
+                //       // wall의 데이터 저장
+                //       List<DocumentSnapshot> sortedDocs = wall_snapshot!.docs;
+                //       // wall 데이터들을 최신순으로 sort
+                //       sortedDocs.sort((a, b) {
+                //         return a['create_date'].compareTo(b['create_date']);
+                //       });
+                //       DocumentSnapshot wallData = sortedDocs[index];
+                //       // return DataTable(
+                //       //   columnSpacing: 20,
+                //       //     columns: [
+                //       //       DataColumn(label: Text("벽면")),
+                //       //       DataColumn(label: Text("태그")),
+                //       //       DataColumn(label: Text("내용")),
+                //       //       DataColumn(label: Text("수정")),
+                //       //     ],
+                //       //     rows: [
+                //       //       DataRow(cells: [
+                //       //         DataCell(Text(wallData['number'].toString(), style: TextStyle(fontSize: 10),)),
+                //       //         DataCell(Text(wallData['tag'], style: TextStyle(fontSize: 10),)),
+                //       //         DataCell(Text(wallData['content'], style: TextStyle(fontSize: 10),)),
+                //       //         DataCell(Text(wallData['modify_date'], style: TextStyle(fontSize: 10),)),
+                //       //       ]),
+                //       //     ],
+                //       // );
+                //     })
+
               ),
-            ),
           ],
         ),
       )
