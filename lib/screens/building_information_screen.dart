@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:board_project/models/building.dart';
 import 'package:board_project/providers/building_firestore.dart';
 import 'package:board_project/screens/building_detail_screen.dart';
+import 'package:board_project/screens/space_create_screen.dart';
+import 'package:board_project/models/space.dart';
+import 'package:board_project/providers/space_firestore.dart';
+import 'package:board_project/screens/space_detail_screen.dart';
 
 class BuildingInformationScreen extends StatefulWidget {
   // building_board_screen에서 전달받는 해당 building 데이터
@@ -20,20 +24,47 @@ class BuildingInformationScreen extends StatefulWidget {
 
 class _BuildingInformationScreenState extends State<BuildingInformationScreen> {
   BuildingFirebase buildingFirebase = BuildingFirebase();
+  SpaceFirebase spaceFirebase = SpaceFirebase();
+  // DB에서 받아온 space 컬렉션 데이터 담을 list
+  List<Space> spaces = [];
 
   // 전달받은 building 데이터 저장할 변수
   late Building buildingData;
   // 전달받은 buildingId 데이터 저장할 변수
   late String buildingId;
 
+  // 해당 building의 space 데이터들 DocumentSnapshot 저장할 변수
+  QuerySnapshot? space_snapshot;
+  // 해당 building의 space 목록 길이 초기화
+  int spaces_null_len = 0;
+
+  // 공간(space) 하나를 눌렀을 때 상세화면에 넘겨줄 해당 공간 documentId
+  late String documentId;
+
   @override
   void initState() {
+    super.initState();
     // 전달받은 building 데이터 저장
     buildingData = widget.data;
     // 전달받은 buildingId 데이터 저장
     buildingId = widget.dataId;
     setState(() {
       buildingFirebase.initDb();
+      spaceFirebase.initDb();
+      // 해당 building의 space 데이터의 snapshot 저장
+      fetchData();
+    });
+  }
+
+  // 해당 building의 space 데이터의 snapshot 저장하는 함수
+  Future<void> fetchData() async {
+    // 해당 building의 space 데이터의 DocumentSnapshot() 찾아서 저장
+    space_snapshot = await spaceFirebase.spaceReference
+        .where('building', isEqualTo: buildingId)
+        .get();
+    setState(() {
+      // 해당 building의 space 목록 길이 저장
+      spaces_null_len = space_snapshot!.docs.length;
     });
   }
 
@@ -101,8 +132,47 @@ class _BuildingInformationScreenState extends State<BuildingInformationScreen> {
                 ],
               ),
               child: Align(
+                // box 가운데에 정렬
                 alignment: Alignment.center,
-                child: Text('내용이 없습니다.', textAlign: TextAlign.center,),
+                // 공간 목록이 null일 경우
+                child: spaces_null_len == 0
+                    ? Text(
+                  '생성된 공간이 없습니다', textAlign: TextAlign.center,)
+                // 공간 목록이 null이 아닐 경우
+                    : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: space_snapshot!.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      // space의 데이터 저장
+                      List<DocumentSnapshot> sortedDocs = space_snapshot!.docs;
+                      // space 데이터들을 최신순으로 sort
+                      sortedDocs.sort((a, b) {
+                        return a['create_date'].compareTo(b['create_date']);
+                      });
+                      DocumentSnapshot spaceData = sortedDocs[index];
+
+                      return ListTile(
+                        title: Text(spaceData['name']),
+                        subtitle: Text(spaceData['type'] == true ? '열린 공간' : '닫힌 공간'),
+                        onTap: () {
+
+                          Space space = Space(
+                            building: spaceData['building'],
+                            name: spaceData['name'],
+                            type: spaceData['type'],
+                            author: spaceData['author'],
+                            create_date: spaceData['create_date'],
+                            modify_date: spaceData['modify_date'],
+                          );
+
+                          // 공간의 상세화면을 보여주는 screen으로 화면 전환(인자: 해당 공간 데이터, 해당 공간의 document Id)
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => SpaceDetailScreen(data: space, dataId: spaceData.reference.id)),
+                          );
+                          },
+                      );
+                    })
               ),
             ),
             Divider(
@@ -118,7 +188,13 @@ class _BuildingInformationScreenState extends State<BuildingInformationScreen> {
               children: [
                 InkWell(
                   onTap: () {
+                    bool spaceType = false;
 
+                    // 세부 공간 생성 화면을 보여주는 screen으로 화면 전환(인자: 선택한 공간 타입, 해당 건물의 document Id)
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => SpaceCreateScreen(data: spaceType, dataId: buildingId)),
+                    );
                   },
                   child: Container(
                     width: 157.59,
@@ -147,7 +223,13 @@ class _BuildingInformationScreenState extends State<BuildingInformationScreen> {
                   padding: EdgeInsets.all(25.0), // 패딩 값 조정 가능
                   child: InkWell(
                     onTap: () {
+                      bool spaceType = true;
 
+                      // 세부 공간 생성 화면을 보여주는 screen으로 화면 전환(인자: 선택한 공간 타입, 해당 건물의 document Id)
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => SpaceCreateScreen(data: spaceType, dataId: buildingId)),
+                      );
                     },
                     child: Container(
                       width: 157.59,
