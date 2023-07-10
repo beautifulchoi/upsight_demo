@@ -77,8 +77,9 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
   List<DataColumn> _getColumns() {
     List<DataColumn> dataColumn = [];
     for (String c in wall_col) {
-      dataColumn.add(DataColumn(label: Text(c)));
+      dataColumn.add(DataColumn(label: Text(c, style: TextStyle(fontSize: 12),)));
     }
+
     return dataColumn;
   }
 
@@ -96,10 +97,11 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
     for (var i = 0; i < wall_snapshot!.docs.length; i++) {
       List<DataCell> cells = [];
 
-      cells.add(DataCell(Text(sortedDocs[i]['number'].toString())));
-      cells.add(DataCell(Text(sortedDocs[i]['tag'])));
-      cells.add(DataCell(Text(sortedDocs[i]['content'])));
-      cells.add(DataCell(Text(sortedDocs[i]['modify_date'])));
+      cells.add(DataCell(Text(sortedDocs[i]['number'].toString(), style: TextStyle(fontSize: 10),)));
+      cells.add(DataCell(Text('#' + sortedDocs[i]['tag'], style: TextStyle(fontSize: 10),)));
+      //cells.add(DataCell(ConstrainedBox(constraints: BoxConstraints(maxWidth: 100), child: Text(sortedDocs[i]['content']),)));
+      cells.add(DataCell(Text(sortedDocs[i]['content'], style: TextStyle(fontSize: 10),)));
+      cells.add(DataCell(Text(sortedDocs[i]['modify_date'], style: TextStyle(fontSize: 10),)));
 
       dataRow.add(DataRow(cells: cells));
     }
@@ -251,38 +253,8 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
                   child: _getDataTable(),
                 ),
               )
-
-                // : ListView.builder(
-                //     shrinkWrap: true,
-                //     itemCount: wall_snapshot!.docs.length,
-                //     itemBuilder: (BuildContext context, int index) {
-                //       // wall의 데이터 저장
-                //       List<DocumentSnapshot> sortedDocs = wall_snapshot!.docs;
-                //       // wall 데이터들을 최신순으로 sort
-                //       sortedDocs.sort((a, b) {
-                //         return a['create_date'].compareTo(b['create_date']);
-                //       });
-                //       DocumentSnapshot wallData = sortedDocs[index];
-                //       // return DataTable(
-                //       //   columnSpacing: 20,
-                //       //     columns: [
-                //       //       DataColumn(label: Text("벽면")),
-                //       //       DataColumn(label: Text("태그")),
-                //       //       DataColumn(label: Text("내용")),
-                //       //       DataColumn(label: Text("수정")),
-                //       //     ],
-                //       //     rows: [
-                //       //       DataRow(cells: [
-                //       //         DataCell(Text(wallData['number'].toString(), style: TextStyle(fontSize: 10),)),
-                //       //         DataCell(Text(wallData['tag'], style: TextStyle(fontSize: 10),)),
-                //       //         DataCell(Text(wallData['content'], style: TextStyle(fontSize: 10),)),
-                //       //         DataCell(Text(wallData['modify_date'], style: TextStyle(fontSize: 10),)),
-                //       //       ]),
-                //       //     ],
-                //       // );
-                //     })
-
-              ),
+            ),
+            SizedBox(height: 16),
           ],
         ),
       )

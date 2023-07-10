@@ -33,6 +33,8 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
   // 게시글(building) 하나를 눌렀을 때 상세화면에 넘겨줄 해당 게시글 documentId
   late String documentId;
 
+  bool bookmarkData = false;
+
   @override
   void initState() {
     super.initState();
@@ -118,12 +120,28 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
   Widget _buildItemWidget(Building building) {
     return ListTile(
       title: Text(building.name),
-      subtitle: Text(building.address),
-      trailing: Column(
-        children: [
-          Text(building.create_date),
-        ],
-      ),
+      subtitle: Column(children: [Text(building.address),Text(building.create_date),]),
+      trailing: IconButton(
+          onPressed: () async {
+            QuerySnapshot snapshot = await buildingFirebase.buildingReference
+                .where('name', isEqualTo: building.name)
+                .where('address', isEqualTo: building.address)
+                .where('create_date', isEqualTo: building.create_date)
+                .get();
+
+            if (snapshot.docs.isNotEmpty) {
+              bookmarkData = building.bookmark;
+              String documentId = snapshot.docs.first.id;
+              await buildingFirebase.buildingReference.doc(documentId).update({'bookmark': !building.bookmark});
+              setState(() {
+                building.bookmark = !bookmarkData;
+              });
+            }
+          },
+          icon: Icon(
+              color: Colors.blue,
+              building.bookmark ? Icons.stars_rounded : Icons.stars_outlined
+          )),
       onTap: () async {
         QuerySnapshot snapshot = await buildingFirebase.buildingReference
             .where('name', isEqualTo: building.name)
