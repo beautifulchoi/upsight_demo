@@ -33,7 +33,14 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
   // 게시글(building) 하나를 눌렀을 때 상세화면에 넘겨줄 해당 게시글 documentId
   late String documentId;
 
+  // 즐겨찾기 버튼 눌렀는지 유무 저장하는 변수
   bool bookmarkData = false;
+
+  // 검색된 게시글의 document Id를 저장할 변수
+  late String searchDocumentId;
+
+  // 검색어 저장할 변수
+  String searchText = '';
 
   @override
   void initState() {
@@ -116,6 +123,28 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
     }
   }
 
+  // ** 검색창(상단) 만들기 **
+  // 검색창 입력 내용 controller
+  TextEditingController searchTextController = TextEditingController();
+  // DB에서 검색한 게시글을 가져오는데 활용되는 변수
+  Future<QuerySnapshot>? searchResults = null;
+
+  // X 아이콘 클릭시 검색어 삭제
+  emptyTextFormField() {
+    searchTextController.clear();
+  }
+
+  // 검색어 입력 후 submit하게 되면 DB에서 검색어와 일치하거나 포함하는 결과 가져와서 future 변수에 저장
+  controlSearching(str) {
+    searchText = str;
+    // 제목만 검색되게 함
+    Future<QuerySnapshot> allBuildings = buildingFirebase.buildingReference.where('name', isEqualTo: str).get();
+    setState(() {
+      // DB에서 필터링한 Building들 저장
+      searchResults = allBuildings;
+    });
+  }
+
   // 건물 목록을 보여줄 UI 위젯
   Widget _buildItemWidget(Building building) {
     return ListTile(
@@ -129,6 +158,7 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
                 .where('create_date', isEqualTo: building.create_date)
                 .get();
 
+            // 해당 건물의 즐겨찾기 유무를 반대로 바꿔줌
             if (snapshot.docs.isNotEmpty) {
               bookmarkData = building.bookmark;
               String documentId = snapshot.docs.first.id;
@@ -139,6 +169,7 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
             }
           },
           icon: Icon(
+            // 즐겨찾기 유무에 따라 다른 icon을 보여줌
               color: Colors.blue,
               building.bookmark ? Icons.stars_rounded : Icons.stars_outlined
           )),
@@ -160,6 +191,78 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
               builder: (BuildContext context) => BuildingInformationScreen(data: building, dataId: documentId)),
         );
       },
+    );
+  }
+
+  Widget totalItemWidget() {
+    return ListView.builder(
+        itemCount: buildings.length + (isLastPage ? 0 : 1),
+        itemBuilder: (BuildContext context, int index) {
+          // 현재 index가 buildings 크기와 같은지 판별하는 코드
+          if (index == buildings.length) {
+            // 로딩 중이라면 로딩 circle 보여줌
+            if (isLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              // 로딩 중이 아니라면 빈 위젯 보여줌
+              return SizedBox.shrink();
+            }
+          }
+          // 현재 index가 buildings 크기보다 작다면 해당 순서의 building 데이터로 list 보여주는 함수 실행
+          return _buildItemWidget(buildings[index]);
+        },
+      controller: _scrollController,
+    );
+  }
+
+  Widget searchItemWidget() {
+    return FutureBuilder(
+        future: searchResults,
+        builder: (context, snapshot) {
+          // snapshot에 데이터가 없으면 로딩 circle 보여줌
+          if(!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          // 검색어로 검색된 building 데이터들을 저장할 list
+          List<Building> searchBuildingResult = [];
+          snapshot.data!.docs.forEach((document) {
+            Building building = Building.fromSnapshot(document);
+            // 각 building 순서대로 list에 추가
+            searchBuildingResult.add(building);
+          });
+
+          // 검색된 결과가 없을 경우
+          if(searchBuildingResult.isEmpty) {
+            return Container(
+              child: Center(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    Icon(Icons.sentiment_dissatisfied_outlined, size: 50,),
+                    Text(
+                      '해당 게시글이 없어요',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else {
+            // 검색된 결과들을 보여주는 UI 코드
+            return ListView.builder(
+                itemCount: searchBuildingResult.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _buildItemWidget(searchBuildingResult[index]);
+                },
+              controller: _scrollController,
+            );
+          }
+        }
     );
   }
 
@@ -191,24 +294,40 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
           }
         },
       ),
-      body: ListView.builder(
-          itemCount: buildings.length + (isLastPage ? 0 : 1),
-          itemBuilder: (BuildContext context, int index) {
-            // 현재 index가 buildings 크기와 같은지 판별하는 코드
-            if (index == buildings.length) {
-              // 로딩 중이라면 로딩 circle 보여줌
-              if (isLoading) {
-                return Center(child: CircularProgressIndicator());
-              } else {
-                // 로딩 중이 아니라면 빈 위젯 보여줌
-                return SizedBox.shrink();
-              }
-            }
-            // 현재 index가 buildings 크기보다 작다면 해당 순서의 building 데이터로 list 보여주는 함수 실행
-            return _buildItemWidget(buildings[index]);
-            },
-        controller: _scrollController,
-      ),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: TextFormField(
+              // 검색창 controller
+              controller: searchTextController,
+              decoration: InputDecoration(
+                  hintText: '공간 별칭을 입력하세요',
+                  hintStyle: TextStyle(
+                      color: Colors.black
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green,)
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.yellow,)
+                  ),
+                  filled: true,
+                  prefixIcon: Icon(Icons.search,),
+                  suffixIcon: IconButton(icon: Icon(Icons.clear,), onPressed: emptyTextFormField)
+              ),
+              style: TextStyle(
+                  color: Colors.black
+              ),
+              // 키보드의 search 버튼을 누르면 게시물 검색 함수 실행
+              textInputAction: TextInputAction.search,
+              onFieldSubmitted: controlSearching,
+            ),),
+          Expanded(
+              child: searchText.isEmpty ? totalItemWidget() : searchItemWidget()
+          )
+        ],
+      )
     );
   }
 }

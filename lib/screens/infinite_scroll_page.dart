@@ -299,7 +299,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
                 },
                 controller: _scrollController,
               ),
-
           )
         ],
       )
