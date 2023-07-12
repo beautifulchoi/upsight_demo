@@ -1,7 +1,8 @@
-import 'package:board_project/screens/home/auth_screen.dart';
+import 'package:board_project/screens/auth_screen.dart';
 import 'package:board_project/screens/rounge/create_screen.dart';
 import 'package:board_project/screens/rounge/detail_screen.dart';
 import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
+import 'package:board_project/screens/tab_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/screens/rounge/board_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,14 +37,16 @@ class MyApp extends StatelessWidget {
       //initialRoute: '/',
       //initialRoute: '/test',
       //initialRoute: '/building',
-      initialRoute: '/auth',
+      //initialRoute: '/auth',
+      initialRoute: '/tab',
       routes: {
         //'/': (context) => BoardScreen(),
         '/create': (context) => CreateScreen(),
         '/test': (context) => InfiniteScrollPage(),
         //'/search': (context) => SearchScreen(),
-        //'/building': (context) => BuildingBoardScreen(),
+        '/building': (context) => BuildingBoardScreen(),
         '/auth': (context) => AuthScreen(),
+        '/tab': (context) => TabScreen(),
       },
       //home: BoardScreen(),
     );
