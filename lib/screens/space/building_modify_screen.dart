@@ -2,7 +2,7 @@
 건물(building) 수정하는 page
  */
 
-import 'package:board_project/screens/building_detail_screen.dart';
+import 'package:board_project/screens/space/building_detail_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/building.dart';

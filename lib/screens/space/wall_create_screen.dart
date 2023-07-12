@@ -2,24 +2,25 @@
 벽면(wall) 생성하는 page
  */
 
-import 'package:board_project/providers/wall_firestore.dart';
+import 'package:board_project/providers/space_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:board_project/models/wall.dart';
-import 'package:board_project/screens/building_board_screen.dart';
+import 'package:board_project/models/space.dart';
+import 'package:board_project/screens/space/building_board_screen.dart';
 
 class WallCreateScreen extends StatefulWidget {
   // space_detail_screen에서 전달받는 벽면 number 데이터
-  final int data;
-  // space_detail_screen에서 전달받는 해당 space 데이터
+  final int dataNum;
   final String dataId;
-  WallCreateScreen({required this.data, required this.dataId});
+  final String dataName;
+  final bool dataType;
+  WallCreateScreen({required this.dataNum, required this.dataId, required this.dataName, required this.dataType});
 
   _WallCreateScreenState createState() => _WallCreateScreenState();
 }
 
 class _WallCreateScreenState extends State<WallCreateScreen> {
-  WallFirebase wallFirebase = WallFirebase();
+  SpaceFirebase spaceFirebase = SpaceFirebase();
 
   // 새로 생성하는 wall model의 각 필드 초기화
   String tag = '';
@@ -33,19 +34,27 @@ class _WallCreateScreenState extends State<WallCreateScreen> {
 
   // 전달받은 벽면 number 데이터 저장할 변수
   late int wallNum;
-  // 전달받은 spaceId 데이터 저장할 변수
-  late String spaceId;
+  // 전달받은 building id 데이터 저장할 변수
+  late String buildingId;
+  // 전달받은 space name 저장할 변수
+  late String spaceName;
+  // 전달받은 space type 저장할 변수
+  late bool spaceType;
 
   @override
   void initState() {
     super.initState();
     // 전달받은 벽면 number 데이터 저장
-    wallNum = widget.data;
-    // 전달받은 spaceId 데이터 저장
-    spaceId = widget.dataId;
+    wallNum = widget.dataNum;
+    // 전달받은 building id 데이터 저장
+    buildingId = widget.dataId;
+    // 전달받은 space name 데이터 저장
+    spaceName = widget.dataName;
+    // 전달받은 space type 데이터 저장
+    spaceType = widget.dataType;
 
     setState(() {
-      wallFirebase.initDb();
+      spaceFirebase.initDb();
     });
     user = 'admin';
   }
@@ -66,6 +75,36 @@ class _WallCreateScreenState extends State<WallCreateScreen> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
+            Text('선택한 세부 공간의 내용을 입력해주세요.'),
+            Divider(thickness: 1),
+            // 공간 이름
+            Container(
+              padding: EdgeInsets.all(8),
+              width: double.infinity,
+              child: Text(
+                spaceName,
+                style: TextStyle(fontWeight: FontWeight.bold),
+                textScaleFactor: 1.4,
+                textAlign: TextAlign.start,
+              ),
+            ),
+            Divider(
+              thickness: 1,
+            ),
+            // 공간 타입
+            Container(
+              padding: EdgeInsets.all(8),
+              width: double.infinity,
+              child: Text(
+                spaceType ? '열린 공간' : '닫힌 공간',
+                style: TextStyle(fontWeight: FontWeight.bold),
+                textScaleFactor: 1.4,
+                textAlign: TextAlign.start,
+              ),
+            ),
+            Divider(
+              thickness: 1,
+            ),
             // 벽면 번호
             Container(
               padding: EdgeInsets.all(8),
@@ -105,10 +144,12 @@ class _WallCreateScreenState extends State<WallCreateScreen> {
                 onPressed: () {
                   // 모든 필드가 작성되었는지 확인
                   if (tag.isNotEmpty && content.isNotEmpty) {
-                    // 입력받은 데이터로 새로운 wall 데이터 생성하여 DB에 생성
-                    Wall newWall = Wall(
-                      space: spaceId,
-                      number: wallNum,
+                    // 입력받은 데이터로 새로운 space 데이터 생성하여 DB에 생성
+                    Space newSpace = Space(
+                      building: buildingId,
+                      name: spaceName,
+                      wall: wallNum,
+                      type: spaceType,
                       tag: tag,
                       content: content,
                       author: user,
@@ -116,7 +157,7 @@ class _WallCreateScreenState extends State<WallCreateScreen> {
                       modify_date: modify_date,
                     );
 
-                    wallFirebase.addWall(newWall).then((value) {
+                    spaceFirebase.addSpace(newSpace).then((value) {
                       // 새로 생성된 데이터는 building 목록 screen으로 전환되면서 전달됨
                       Navigator.of(context).push(
                         MaterialPageRoute(

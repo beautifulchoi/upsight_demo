@@ -6,7 +6,7 @@ import 'package:board_project/providers/answer_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
-import 'package:board_project/screens/modify_screen.dart';
+import 'package:board_project/screens/rounge/modify_screen.dart';
 import 'package:board_project/providers/question_firestore.dart';
 import 'package:board_project/models/answer.dart';
 import 'package:intl/intl.dart';

@@ -5,9 +5,9 @@
 import 'package:board_project/providers/building_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:board_project/screens/building_create_screen.dart';
+import 'package:board_project/screens/space/building_create_screen.dart';
 import 'package:board_project/models/building.dart';
-import 'package:board_project/screens/building_information_screen.dart';
+import 'package:board_project/screens/space/building_information_screen.dart';
 
 class BuildingBoardScreen extends StatefulWidget {
   @override
@@ -148,8 +148,44 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
   // 건물 목록을 보여줄 UI 위젯
   Widget _buildItemWidget(Building building) {
     return ListTile(
-      title: Text(building.name),
-      subtitle: Column(children: [Text(building.address),Text(building.create_date),]),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Color(0x11000000),),
+      ),
+      title: Text(building.name,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+          fontFamily: 'Pretendard Variable',
+          fontWeight: FontWeight.w500,
+      ),),
+      subtitle: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: building.address,
+              style: TextStyle(
+                color: Color(0xFF585858),
+                fontSize: 14,
+                fontFamily: 'Pretendard Variable',
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+            TextSpan(
+              text: '\n'
+            ),
+            TextSpan(
+              text: building.create_date,
+              style: TextStyle(
+                color: Color(0xFF585858),
+                fontSize: 10,
+                fontFamily: 'Pretendard Variable',
+                fontWeight: FontWeight.w300,
+              ),
+            )
+          ]
+        )
+      ),
       trailing: IconButton(
           onPressed: () async {
             QuerySnapshot snapshot = await buildingFirebase.buildingReference
@@ -170,7 +206,7 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
           },
           icon: Icon(
             // 즐겨찾기 유무에 따라 다른 icon을 보여줌
-              color: Colors.blue,
+              color: Color(0xFF0F4C82),
               building.bookmark ? Icons.stars_rounded : Icons.stars_outlined
           )),
       onTap: () async {
@@ -194,7 +230,8 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
     );
   }
 
-  Widget totalItemWidget() {
+  // 전체 building 목록을 보여주기 위한 함수
+  Widget _totalItemWidget() {
     return ListView.builder(
         itemCount: buildings.length + (isLastPage ? 0 : 1),
         itemBuilder: (BuildContext context, int index) {
@@ -209,13 +246,14 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
             }
           }
           // 현재 index가 buildings 크기보다 작다면 해당 순서의 building 데이터로 list 보여주는 함수 실행
-          return _buildItemWidget(buildings[index]);
+          return Padding(padding: EdgeInsets.only(top: 3, bottom: 3, left: 15, right: 15), child: _buildItemWidget(buildings[index]));
         },
       controller: _scrollController,
     );
   }
 
-  Widget searchItemWidget() {
+  // 검색된 building 목록을 보여주기 위한 함수
+  Widget _searchItemWidget() {
     return FutureBuilder(
         future: searchResults,
         builder: (context, snapshot) {
@@ -272,49 +310,121 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.red,
-        title: Text('전체 공간'),
+        centerTitle: true,
+        title: Text('공간 기록',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontFamily: 'Pretendard Variable',
+            fontWeight: FontWeight.w600,),),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
-        child: Text('+', style: TextStyle(fontSize: 25),),
-        onPressed: () async {
-          // 해당 버튼을 눌렀을 경우 건물 생성 screen으로 화면 전환, 다시 본 screen으로 넘어올 때 새로 생성된 건물의 데이터를 받아옴
-          final newBuilding = await Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (BuildContext context) => BuildingCreateScreen(),
+      // 새 공간 생성하기 버튼
+      floatingActionButton: Container(
+        height: 72.83,
+        width: 72.83,
+        child: FittedBox(
+          child: FloatingActionButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32.50),
             ),
-          );
-          // 새로 생성된 건물의 데이터가 null인지 확인하는 코드
-          if (newBuilding != null) {
-            setState(() {
-              // questions에 새로 생성된 게시글 추가
-              buildings.insert(0, newBuilding);
-            });
-          }
-        },
+            backgroundColor: Color(0xFF628AAE),
+            child: Text('새 공간',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontFamily: 'Pretendard Variable',
+                fontWeight: FontWeight.w600,
+              ),),
+            onPressed: () async {
+              // 해당 버튼을 눌렀을 경우 건물 생성 screen으로 화면 전환, 다시 본 screen으로 넘어올 때 새로 생성된 건물의 데이터를 받아옴
+              final newBuilding = await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => BuildingCreateScreen(),
+                ),
+              );
+              // 새로 생성된 건물의 데이터가 null인지 확인하는 코드
+              if (newBuilding != null) {
+                setState(() {
+                  // questions에 새로 생성된 게시글 추가
+                  buildings.insert(0, newBuilding);
+                });
+              }
+            },
+          ),
+        ),
       ),
       body: Column(
         children: <Widget>[
+          // 나중에 wigdet 디렉터리로 빼야 함
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Text('전체 공간',
+                  style: TextStyle(
+                    color: Color(0xFF0F4C82),
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w700,
+                  ),),),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Text('공간 하자',
+                  style: TextStyle(
+                    color: Color(0xFF75777C),
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w700,
+                  ),),),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Text('수리 진행',
+                  style: TextStyle(
+                    color: Color(0xFF75777C),
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w700,
+                  ),),),
+            ],
+          ),
+          // 검색창
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10),
             child: TextFormField(
               // 검색창 controller
               controller: searchTextController,
               decoration: InputDecoration(
-                  hintText: '공간 별칭을 입력하세요',
-                  hintStyle: TextStyle(
-                      color: Colors.black
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green,)
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.yellow,)
-                  ),
-                  filled: true,
-                  prefixIcon: Icon(Icons.search,),
-                  suffixIcon: IconButton(icon: Icon(Icons.clear,), onPressed: emptyTextFormField)
+                hintText: '공간 별칭을 검색하세요.',
+                hintStyle: TextStyle(
+                  color: Color(0xFF9C9EA0),
+                  fontSize: 14,
+                  fontFamily: 'Pretendard Variable',
+                  fontWeight: FontWeight.w400,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                prefixIcon: Icon(Icons.search,),
+                suffixIcon: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: emptyTextFormField,
+                ),
+                // 폼 필드의 기본 테두리
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(color: Color(0x11000000),),
+                ),
+                // 폼 필드가 활성화되어 있을 때 적용되는 테두리
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(color: Color(0x11000000),),
+                ),
+                // 폼 필드 위에 마우스가 올라왔을 때 적용되는 테두리
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(color: Color(0x11000000),),
+                ),
               ),
               style: TextStyle(
                   color: Colors.black
@@ -324,7 +434,7 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
               onFieldSubmitted: controlSearching,
             ),),
           Expanded(
-              child: searchText.isEmpty ? totalItemWidget() : searchItemWidget()
+              child: searchText.isEmpty ? _totalItemWidget() : _searchItemWidget()
           )
         ],
       )

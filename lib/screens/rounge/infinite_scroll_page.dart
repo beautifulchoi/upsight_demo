@@ -3,12 +3,12 @@
  */
 
 import 'package:board_project/providers/question_firestore.dart';
-import 'package:board_project/screens/search_screen.dart';
+import 'package:board_project/screens/rounge/search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
-import 'package:board_project/screens/create_screen.dart';
-import 'package:board_project/screens/detail_screen.dart';
+import 'package:board_project/screens/rounge/create_screen.dart';
+import 'package:board_project/screens/rounge/detail_screen.dart';
 import 'package:intl/intl.dart';
 
 class InfiniteScrollPage extends StatefulWidget {

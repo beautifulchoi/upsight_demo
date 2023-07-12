@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
 import 'package:board_project/providers/question_firestore.dart';
-import 'package:board_project/screens/detail_screen.dart';
+import 'package:board_project/screens/rounge/detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   @override

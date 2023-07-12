@@ -6,11 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/building.dart';
 import 'package:board_project/providers/building_firestore.dart';
-import 'package:board_project/screens/building_detail_screen.dart';
-import 'package:board_project/screens/space_create_screen.dart';
+import 'package:board_project/screens/space/building_detail_screen.dart';
+import 'package:board_project/screens/space/space_create_screen.dart';
 import 'package:board_project/models/space.dart';
 import 'package:board_project/providers/space_firestore.dart';
-import 'package:board_project/screens/space_detail_screen.dart';
+import 'package:board_project/screens/space/space_detail_screen.dart';
 
 class BuildingInformationScreen extends StatefulWidget {
   // building_board_screen에서 전달받는 해당 building 데이터
@@ -152,23 +152,36 @@ class _BuildingInformationScreenState extends State<BuildingInformationScreen> {
                       DocumentSnapshot spaceData = sortedDocs[index];
 
                       return ListTile(
-                        title: Text(spaceData['name']),
+                        title: Text(spaceData['name'] + ' ' + spaceData['wall'].toString()),
                         subtitle: Text(spaceData['type'] == true ? '열린 공간' : '닫힌 공간'),
                         onTap: () {
 
                           Space space = Space(
                             building: spaceData['building'],
                             name: spaceData['name'],
+                            wall: spaceData['wall'],
                             type: spaceData['type'],
+                            tag: spaceData['tag'],
+                            content: spaceData['content'],
                             author: spaceData['author'],
                             create_date: spaceData['create_date'],
                             modify_date: spaceData['modify_date'],
                           );
 
+                          print(spaceData['building']);
+                          print(spaceData['name']);
+                          print(spaceData['wall']);
+                          print(spaceData['type']);
+                          print(spaceData['tag']);
+                          print(spaceData['content']);
+                          print(spaceData['author']);
+                          print(spaceData['create_date']);
+                          print(spaceData['modify_date']);
+
                           // 공간의 상세화면을 보여주는 screen으로 화면 전환(인자: 해당 공간 데이터, 해당 공간의 document Id)
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (BuildContext context) => SpaceDetailScreen(data: space, dataId: spaceData.reference.id)),
+                                builder: (BuildContext context) => SpaceDetailScreen(data: space)),
                           );
                           },
                       );

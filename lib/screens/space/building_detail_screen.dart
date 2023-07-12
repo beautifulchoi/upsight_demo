@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/building.dart';
 import 'package:board_project/providers/building_firestore.dart';
-import 'package:board_project/screens/building_modify_screen.dart';
+import 'package:board_project/screens/space/building_modify_screen.dart';
 
 class BuildingDetailScreen extends StatefulWidget {
   // building_board_screen에서 전달받는 해당 building 데이터

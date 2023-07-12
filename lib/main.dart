@@ -1,13 +1,14 @@
-import 'package:board_project/screens/create_screen.dart';
-import 'package:board_project/screens/detail_screen.dart';
-import 'package:board_project/screens/infinite_scroll_page.dart';
+import 'package:board_project/screens/home/auth_screen.dart';
+import 'package:board_project/screens/rounge/create_screen.dart';
+import 'package:board_project/screens/rounge/detail_screen.dart';
+import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
 import 'package:flutter/material.dart';
-import 'package:board_project/screens/board_screen.dart';
+import 'package:board_project/screens/rounge/board_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:get/get.dart';
-import 'package:board_project/screens/search_screen.dart';
-import 'package:board_project/screens/building_board_screen.dart';
+import 'package:board_project/screens/rounge/search_screen.dart';
+import 'package:board_project/screens/space/building_board_screen.dart';
 
 void main() async {
   // 플랫폼 채널의 위젯 바인딩을 보장하기 위한 코드
@@ -34,13 +35,15 @@ class MyApp extends StatelessWidget {
       // router 코드 : 원래 /test 말고 /로 initialRoute 바꾸고 inifinte_scroll_page 코드를 boardscreen에 구현해야 함
       //initialRoute: '/',
       //initialRoute: '/test',
-      initialRoute: '/building',
+      //initialRoute: '/building',
+      initialRoute: '/auth',
       routes: {
         //'/': (context) => BoardScreen(),
         '/create': (context) => CreateScreen(),
         '/test': (context) => InfiniteScrollPage(),
         //'/search': (context) => SearchScreen(),
-        '/building': (context) => BuildingBoardScreen(),
+        //'/building': (context) => BuildingBoardScreen(),
+        '/auth': (context) => AuthScreen(),
       },
       //home: BoardScreen(),
     );
