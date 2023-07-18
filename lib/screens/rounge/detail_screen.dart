@@ -141,9 +141,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ),
                   title: Text(questionData.author),
-                  subtitle: Text(questionData.create_date +
-                      "     " +
-                      questionData.modify_date),
+                  subtitle: Text(questionData.create_date + "     " + questionData.modify_date),
                 ),
                 // 제목
                 Container(
@@ -304,34 +302,18 @@ class _DetailScreenState extends State<DetailScreen> {
                                                         .where('create_date', isEqualTo: questionData.create_date)
                                                         .get();
 
-                                                    if (snapshot
-                                                        .docs.isNotEmpty) {
-                                                      String documentId =
-                                                          snapshot
-                                                              .docs.first.id;
+                                                    if (snapshot.docs.isNotEmpty) {
+                                                      String documentId = snapshot.docs.first.id;
                                                       // 해당 question 데이터 삭제
-                                                      await questionFirebase
-                                                          .questionReference
-                                                          .doc(documentId)
-                                                          .delete();
+                                                      await questionFirebase.questionReference.doc(documentId).delete();
 
                                                       // 해당 question의 answer 데이터 삭제
-                                                      for (int i = 0;
-                                                      i <
-                                                          answer_snapshot!
-                                                              .docs.length;
-                                                      i++) {
-                                                        await answerFirebase
-                                                            .answerReference
-                                                            .doc(
-                                                            answer_snapshot!
-                                                                .docs[i].id)
-                                                            .delete();
+                                                      for (int i = 0; i < answer_snapshot!.docs.length; i++) {
+                                                        await answerFirebase.answerReference.doc(answer_snapshot!.docs[i].id).delete();
                                                       }
 
                                                       // 게시물 list screen으로 전환
-                                                      Navigator.pushNamed(
-                                                          context, '/test');
+                                                      Navigator.pushNamed(context, '/test');
                                                     }
                                                   },
                                                 ),
@@ -424,21 +406,17 @@ class _DetailScreenState extends State<DetailScreen> {
                       Container(
                         child: IconButton(
                           onPressed: () async {
-                            QuerySnapshot snapshot = await questionFirebase
-                                .questionReference
+                            QuerySnapshot snapshot = await questionFirebase.questionReference
                                 .where('title', isEqualTo: questionData.title)
-                                .where('content',
-                                isEqualTo: questionData.content)
+                                .where('content', isEqualTo: questionData.content)
                                 .where('author', isEqualTo: questionData.author)
-                                .where('create_date',
-                                isEqualTo: questionData.create_date)
+                                .where('create_date', isEqualTo: questionData.create_date)
                                 .get();
                             // 해당 게시글의 좋아요 유무를 반대로 바꿔줌
                             if (snapshot.docs.isNotEmpty) {
                               likeData = questionData.isLikeClicked;
                               String documentId = snapshot.docs.first.id;
-                              await questionFirebase.questionReference.doc(
-                                  documentId).update({
+                              await questionFirebase.questionReference.doc(documentId).update({
                                 'isLikeClicked': !questionData.isLikeClicked
                               });
                               setState(() {
@@ -449,8 +427,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           icon: Icon(
                             // 좋아요가 true이면 blue, false이면 black으로 아이콘 색을 보여줌
                             color: questionData.isLikeClicked
-                                ? Colors.blue
-                                : Colors.black,
+                                ? Colors.blue : Colors.black,
                             Icons.thumb_up_alt_outlined,
                           ),
                         ),
@@ -475,8 +452,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     itemCount: answer_snapshot!.docs.length,
                     itemBuilder: (BuildContext context, int index) {
                       // answer의 데이터 저장
-                      List<DocumentSnapshot> sortedDocs =
-                          answer_snapshot!.docs;
+                      List<DocumentSnapshot> sortedDocs = answer_snapshot!.docs;
                       // answer 데이터들을 최신순으로 sort
                       sortedDocs.sort((a, b) {
                         return a['create_date'].compareTo(b['create_date']);
@@ -502,35 +478,16 @@ class _DetailScreenState extends State<DetailScreen> {
                                           TextButton(
                                               child: Text('삭제'),
                                               onPressed: () async {
-                                                QuerySnapshot snapshot =
-                                                await answerFirebase
-                                                    .answerReference
-                                                    .where('question',
-                                                    isEqualTo:
-                                                    answerData[
-                                                    'question'])
-                                                    .where('content',
-                                                    isEqualTo:
-                                                    answerData[
-                                                    'content'])
-                                                    .where(
-                                                    'create_date',
-                                                    isEqualTo:
-                                                    answerData[
-                                                    'create_date'])
+                                                QuerySnapshot snapshot = await answerFirebase.answerReference
+                                                    .where('question', isEqualTo: answerData['question'])
+                                                    .where('content', isEqualTo: answerData['content'])
+                                                    .where('create_date', isEqualTo: answerData['create_date'])
                                                     .get();
-                                                if (snapshot
-                                                    .docs.isNotEmpty) {
-                                                  String documentId =
-                                                      snapshot
-                                                          .docs.first.id;
-                                                  await answerFirebase
-                                                      .answerReference
-                                                      .doc(documentId)
-                                                      .delete();
+                                                if (snapshot.docs.isNotEmpty) {
+                                                  String documentId = snapshot.docs.first.id;
+                                                  await answerFirebase.answerReference.doc(documentId).delete();
                                                   // 게시물 list screen으로 전환
-                                                  Navigator.pushNamed(
-                                                      context, '/test');
+                                                  Navigator.pushNamed(context, '/test');
                                                 }
                                               }),
                                           TextButton(
@@ -598,7 +555,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       controller: _commentTextEditController,
                       validator: (value) {
                         if (value!.trim().isEmpty) {
-                          return '댓글을 입력해주세요.';
+                          return '댓글을 입력해주세요';
                         }
                         return null;
                       },

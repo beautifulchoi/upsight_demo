@@ -349,12 +349,11 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
             },
             backgroundColor: Colors.transparent,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(width: 10,),
                 Icon(Icons.add_home_outlined, color: Colors.white,),
                 SizedBox(width: 5,),
-                Text('새로운 공간 추가',
+                Text('새 공간 추가',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,

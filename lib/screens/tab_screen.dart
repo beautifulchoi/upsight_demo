@@ -1,4 +1,6 @@
 import 'package:board_project/screens/activity/my_activity_screen.dart';
+import 'package:board_project/screens/calendar_screen.dart';
+import 'package:board_project/screens/home_screen.dart';
 import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
 import 'package:board_project/screens/space/building_board_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +14,10 @@ class _TabScreenState extends State<TabScreen> {
   int _selectedPageIndex = 0;
 
   List _pages = [
-    Text('홈'),
+    HomeScreen(),
     InfiniteScrollPage(),
     BuildingBoardScreen(),
-    Text('캘린더'),
+    CalendarScreen(),
     MyActivityScreen(),
   ];
   

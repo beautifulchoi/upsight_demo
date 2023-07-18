@@ -19,18 +19,18 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
           width: 322,
           height: 81.19,
           decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            shadows: [
-              BoxShadow(
-                color: Color(0x19000000),
-                blurRadius: 4,
-                offset: Offset(0, 0),
-                spreadRadius: 2,
-              )
-            ]
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              shadows: [
+                BoxShadow(
+                  color: Color(0x19000000),
+                  blurRadius: 4,
+                  offset: Offset(0, 0),
+                  spreadRadius: 2,
+                )
+              ]
           ),
           child: Row(
             children: [
