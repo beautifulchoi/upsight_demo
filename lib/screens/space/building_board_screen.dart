@@ -316,25 +316,22 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
             color: Colors.black,
             fontSize: 20,
             fontFamily: 'Pretendard Variable',
-            fontWeight: FontWeight.w600,),),
+            fontWeight: FontWeight.w600,),
+        ),
       ),
       // 새 공간 생성하기 버튼
-      floatingActionButton: Container(
-        height: 72.83,
-        width: 72.83,
-        child: FittedBox(
-          child: FloatingActionButton(
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          width: 148.04,
+          height: 49,
+          decoration: ShapeDecoration(
+            color: Color(0xFF628AAE),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32.50),
+              borderRadius: BorderRadius.circular(23.50),
             ),
-            backgroundColor: Color(0xFF628AAE),
-            child: Text('새 공간',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontFamily: 'Pretendard Variable',
-                fontWeight: FontWeight.w600,
-              ),),
+          ),
+          child: FloatingActionButton(
             onPressed: () async {
               // 해당 버튼을 눌렀을 경우 건물 생성 screen으로 화면 전환, 다시 본 screen으로 넘어올 때 새로 생성된 건물의 데이터를 받아옴
               final newBuilding = await Navigator.of(context).push(
@@ -350,6 +347,22 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
                 });
               }
             },
+            backgroundColor: Colors.transparent,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 10,),
+                Icon(Icons.add_home_outlined, color: Colors.white,),
+                SizedBox(width: 5,),
+                Text('새로운 공간 추가',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w600,
+                  ),)
+              ],
+            ),
           ),
         ),
       ),
@@ -361,7 +374,7 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.only(left: 15, right: 15),
-                child: Text('전체 공간',
+                child: Text('모든 공간',
                   style: TextStyle(
                     color: Color(0xFF0F4C82),
                     fontSize: 14,
@@ -370,7 +383,7 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
                   ),),),
               Padding(
                 padding: EdgeInsets.only(left: 15, right: 15),
-                child: Text('공간 하자',
+                child: Text('하자',
                   style: TextStyle(
                     color: Color(0xFF75777C),
                     fontSize: 14,
@@ -379,7 +392,16 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
                   ),),),
               Padding(
                 padding: EdgeInsets.only(left: 15, right: 15),
-                child: Text('수리 진행',
+                child: Text('계약',
+                  style: TextStyle(
+                    color: Color(0xFF75777C),
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w700,
+                  ),),),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Text('보고서 관리',
                   style: TextStyle(
                     color: Color(0xFF75777C),
                     fontSize: 14,
@@ -433,6 +455,7 @@ class _BuildingBoardScreenState extends State<BuildingBoardScreen> {
               textInputAction: TextInputAction.search,
               onFieldSubmitted: controlSearching,
             ),),
+          // 건물 리스트
           Expanded(
               child: searchText.isEmpty ? _totalItemWidget() : _searchItemWidget()
           )

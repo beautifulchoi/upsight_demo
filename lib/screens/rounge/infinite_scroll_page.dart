@@ -3,7 +3,6 @@
  */
 
 import 'package:board_project/providers/question_firestore.dart';
-import 'package:board_project/screens/rounge/search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
@@ -20,6 +19,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   // DB에서 받아온 question 컬렉션 데이터 담을 list
   List<Question> questions = [];
   QuestionFirebase questionFirebase = QuestionFirebase();
+
   // 임의로 지정할 user name, 추후 user model과 연결해야해서 DB 연결시켜야함
   late String user;
 
@@ -37,8 +37,13 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   // 게시글(question) 하나를 눌렀을 때 상세화면에 넘겨줄 해당 게시글 documentId
   late String documentId;
 
+  late DocumentSnapshot document;
+
   // 화면에 보여질 게시글 정렬 기준(true일 경우 생성일 순, false일 경우 조회수 순)
   bool isCreateSort = true;
+
+  // 검색어 저장할 변수
+  String searchText = '';
 
   // _InfiniteScrollPageState가 생성될 때 호출(맨 처음에 한 번만 실행되는 초기화 함수)
   @override
@@ -129,6 +134,22 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
     });
   }
 
+  // 스크롤 이벤트를 처리하는 함수
+  void _scrollListener() {
+    // 클라이언트를 가지고 있는지 확인하여 아니라면 종료
+    if (!_scrollController.hasClients) return;
+
+    // 최대 스크롤 범위 할당
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    // 현재 스크롤 위치 할당
+    final currentScroll = _scrollController.position.pixels;
+
+    // 스크롤을 최하단까지 내렸을 때 추가로 더 가져올 데이터가 있을 때 실행되는 코드
+    if (currentScroll >= maxScroll && !isLoading && !isLastPage) {
+      fetchData();
+    }
+  }
+
   // 조회수 증가시키는 함수
   Future<void> increaseViewsCount(Question question) async {
     // 조회수를 증가시킬 question document의 DocumentSnapshot() 저장
@@ -141,7 +162,8 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
     // 해당 document Id 값 저장
     if (snapshot.docs.isNotEmpty) {
-      String documentId = snapshot.docs.first.id;
+      DocumentSnapshot document = snapshot.docs.first;
+      String documentId = document.id;
 
       // 해당 question의 조회수를 증가된 값으로 업데이트
       await questionFirebase.questionReference.doc(documentId).update({
@@ -149,6 +171,28 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
       });
       question.views_count += 1;
     }
+  }
+
+  // ** 검색창(상단) 만들기 **
+  // 검색창 입력 내용 controller
+  TextEditingController searchTextController = TextEditingController();
+  // DB에서 검색한 게시글을 가져오는데 활용되는 변수
+  Future<QuerySnapshot>? searchResults = null;
+
+  // X 아이콘 클릭시 검색어 삭제
+  emptyTextFormField() {
+    searchTextController.clear();
+  }
+
+  // 검색어 입력 후 submit하게 되면 DB에서 검색어와 일치하거나 포함하는 결과 가져와서 future 변수에 저장
+  controlSearching(str) {
+    searchText = str;
+    // 제목만 검색되게 함
+    Future<QuerySnapshot> allQuestions = questionFirebase.questionReference.where('title', isEqualTo: str).get();
+    setState(() {
+      // DB에서 필터링한 Question들 저장
+      searchResults = allQuestions;
+    });
   }
 
   // 게시글 목록을 보여줄 UI 위젯
@@ -174,134 +218,453 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
             .get();
 
         if (snapshot.docs.isNotEmpty) {
-          documentId = snapshot.docs.first.id;
+          document = snapshot.docs.first;
+          documentId = document.id;
         }
-
         // 게시글의 상세화면을 보여주는 screen으로 화면 전환(인자: 해당 게시글 데이터, 해당 게시글의 document Id)
-        Navigator.of(context).push(
+        await Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (BuildContext context) => DetailScreen(data: question, dataId: documentId)),
+              builder: (BuildContext context) =>
+                  DetailScreen(data: question, dataId: documentId, dataDoc: document)),
         );
       },
     );
   }
 
-  // 스크롤 이벤트를 처리하는 함수
-  void _scrollListener() {
-    // 클라이언트를 가지고 있는지 확인하여 아니라면 종료
-    if (!_scrollController.hasClients) return;
+  // 전체 question 목록을 보여주기 위한 함수
+  Widget _totalItemWidget() {
+    return ListView.builder(
+      itemCount: questions.length + (isLastPage ? 0 : 1),
+      itemBuilder: (BuildContext context, int index) {
+        // 현재 index가 questions 크기와 같은지 판별하는 코드
+        if (index == questions.length) {
+          // 로딩 중이라면 로딩 circle 보여줌
+          if (isLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            // 로딩 중이 아니라면 빈 위젯 보여줌
+            return SizedBox.shrink();
+          }
+        }
+        // 현재 index가 questions 크기보다 작다면 해당 순서의 building 데이터로 list 보여주는 함수 실행
+        return Padding(padding: EdgeInsets.only(top: 3, bottom: 3, left: 15, right: 15), child: _buildItemWidget(questions[index]));
+      },
+      controller: _scrollController,
+    );
+  }
 
-    // 최대 스크롤 범위 할당
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    // 현재 스크롤 위치 할당
-    final currentScroll = _scrollController.position.pixels;
+  // 검색된 question 목록을 보여주기 위한 함수
+  Widget _searchItemWidget() {
+    return FutureBuilder(
+        future: searchResults,
+        builder: (context, snapshot) {
+          // snapshot에 데이터가 없으면 로딩 circle 보여줌
+          if(!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          // 검색어로 검색된 question 데이터들을 저장할 list
+          List<Question> searchBoardResult = [];
+          snapshot.data!.docs.forEach((document) {
+            Question question = Question.fromSnapshot(document);
+            // 각 question를 순서대로 list에 추가
+            searchBoardResult.add(question);
+          });
 
-    // 스크롤을 최하단까지 내렸을 때 추가로 더 가져올 데이터가 있을 때 실행되는 코드
-    if (currentScroll >= maxScroll && !isLoading && !isLastPage) {
-      fetchData();
-    }
+          // 검색된 결과가 없을 경우
+          if(searchBoardResult.isEmpty) {
+            return Container(
+              child: Center(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    Icon(Icons.sentiment_dissatisfied_outlined, size: 50,),
+                    Text(
+                      '해당 게시글이 없어요',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else {
+            // 검색된 결과들을 보여주는 UI 코드
+            return ListView.builder(
+              itemCount: searchBoardResult.length,
+              itemBuilder: (BuildContext context, int index) {
+                return _buildItemWidget(searchBoardResult[index]);
+              },
+              controller: _scrollController,
+            );
+          }
+        }
+    );
   }
 
   // 위젯을 만들고 화면에 보여주는 함수
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar 구현 코드
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.red,
-        title: Text('게시판'),
-        // appBar의 우측에 생성되는 위젯
-        actions: <Widget>[
-          // 눌렀을 경우 퍼지는 효과? 애니메이션?을 주는 함수
-          InkWell(
-            onTap: () async {
-              // 해당 아이콘을 눌렀을 경우 검색 screen으로 화면 전환
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (BuildContext context) => SearchScreen()),
-              );
-            },
-            child: Container(
-              color: Colors.green,
-              padding: EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search),
-                ],
-              ),
+        centerTitle: true,
+        title: Text('라운지',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontFamily: 'Pretendard Variable',
+            fontWeight: FontWeight.w600,),
+        ),
+      ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          width: 323.61,
+          height: 49,
+          decoration: ShapeDecoration(
+            color: Color(0xFF628AAE),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(23.50),
             ),
           ),
-        ],
-      ),
-      // 게시글 생성하는 버튼
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
-        child: Text('+', style: TextStyle(fontSize: 25)),
-        onPressed: () async {
-          // 해당 버튼을 눌렀을 경우 게시글 생성 screen으로 화면 전환, 다시 본 screen으로 넘어올 때 새로 생성된 게시글의 데이터를 받아옴
-          final newQuestion = await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) => CreateScreen(),
+          child: FloatingActionButton(
+            onPressed: () async {
+              final newQuestion = await Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (BuildContext context) => CreateScreen()),
+              );
+              if (newQuestion != null) {
+                setState(() {
+                  questions.insert(0, newQuestion);
+                });
+              }
+            },
+            backgroundColor: Colors.transparent,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 20,),
+                Icon(Icons.edit, color: Colors.white,),
+                SizedBox(width: 5,),
+                Text('게시판에 새 글을 작성해보세요.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w600,
+                  ),)
+              ],
             ),
-          );
-          // 새로 생성된 게시글의 데이터가 null인지 확인하는 코드
-          if (newQuestion != null) {
-            setState(() {
-              // questions에 새로 생성된 게시글 추가
-              questions.insert(0, newQuestion);
-            });
-          }
-        },
+          ),
+        ),
       ),
-      // appBar 아래 UI 구현 코드
       body: Column(
-        children: [
-          // 정렬 기준 바꿀 수 있는 textbutton
+        children: <Widget>[
+          // 나중에 wigdet 디렉터리로 빼야 함
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Text('자유 게시판',
+                  style: TextStyle(
+                    color: Color(0xFF0F4C82),
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w700,
+                  ),),),
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Text('질문하기',
+                  style: TextStyle(
+                    color: Color(0xFF75777C),
+                    fontSize: 14,
+                    fontFamily: 'Pretendard Variable',
+                    fontWeight: FontWeight.w700,
+                   ),),),
+            ],
+          ),
+          // 검색창
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextFormField(
+              // 검색창 controller
+              controller: searchTextController,
+              decoration: InputDecoration(
+                hintText: '검색어를 입력해주세요.',
+                hintStyle: TextStyle(
+                  color: Color(0xFF9C9EA0),
+                  fontSize: 14,
+                  fontFamily: 'Pretendard Variable',
+                  fontWeight: FontWeight.w400,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                prefixIcon: Icon(Icons.search,),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: emptyTextFormField,
+                ),
+                // 폼 필드의 기본 테두리
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(color: Color(0x11000000),),
+                ),
+                // 폼 필드가 활성화되어 있을 때 적용되는 테두리
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(color: Color(0x11000000),),
+                ),
+                // 폼 필드 위에 마우스가 올라왔을 때 적용되는 테두리
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(color: Color(0x11000000),),
+                ),
+              ),
+              style: TextStyle(
+                  color: Colors.black
+              ),
+              // 키보드의 search 버튼을 누르면 게시물 검색 함수 실행
+              textInputAction: TextInputAction.search,
+              onFieldSubmitted: controlSearching,
+            ),),
+          // 정렬 기준
           TextButton.icon(
             icon: RotatedBox(
               quarterTurns: 1,
-              child: Icon(Icons.compare_arrows, size: 28),
+              // child: Icon(Icons.compare_arrows, size: 28),
             ),
             label: Text(
-              // 현재 정렬 기준이 정렬 기준이 최신순이라면 최신순으로, 아니라면 조회순으로 글자 보여줌
-              isCreateSort ? '최신순' : '조회순',
-              style: TextStyle(fontSize: 16),
+              '정확도순',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontFamily: 'Pretendard Variable',
+                fontWeight: FontWeight.w400,
+              ),
             ),
             onPressed: () {
-              setState(() {
-                // 정렬 기준이 최신순이라면 최신순으로, 아니라면 조회순으로 보여줌
-                isCreateSort = !isCreateSort;
-              });
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return ExampleBottomSheet(
+                    isCreateSort: isCreateSort,
+                    onSortChanged: (bool isCreateSort) {
+                      setState(() {
+                        this.isCreateSort = isCreateSort;
+                        questions.clear();
+                        lastDocument = null;
+                        isLastPage = false;
+                        fetchData();
+                      });
+                    },
+                  );
+                },
+              );
             },
           ),
+          Divider(
+            thickness: 1,
+          ),
+          // 게시글 리스트
           Expanded(
-              child:
-              ListView.builder(
-                itemCount: questions.length + (isLastPage ? 0 : 1),
-                itemBuilder: (BuildContext context, int index) {
-                  // 정렬 기준이 최신순이라면 최신순으로, 아니라면 조회순으로 보여주는 코드
-                  isCreateSort ? questions.sort((a, b) => b.create_date.compareTo(a.create_date)) : questions.sort((a, b) => b.views_count.compareTo(a.views_count));
-
-                  // 현재 index가 questions 크기와 같은지 판별하는 코드
-                  if (index == questions.length) {
-                    // 로딩 중이라면 로딩 circle 보여줌
-                    if (isLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else {
-                      // 로딩 중이 아니라면 빈 위젯 보여줌
-                      return SizedBox.shrink();
-                    }
-                  }
-                  // 현재 index가 questions 크기보다 작다면 해당 순서의 question 데이터로 list 보여주는 함수 실행
-                  return _buildItemWidget(questions[index]);
-                },
-                controller: _scrollController,
-              ),
-          )
+              child: searchText.isEmpty ? _totalItemWidget() : _searchItemWidget()
+          ),
+          // Expanded(
+          //   child: ListView.builder(
+          //     itemCount: questions.length + (isLastPage ? 0 : 1),
+          //     itemBuilder: (BuildContext context, int index) {
+          //       isCreateSort
+          //           ? questions.sort((a, b) =>
+          //           b.create_date.compareTo(a.create_date))
+          //           : questions.sort((a, b) =>
+          //           b.views_count.compareTo(a.views_count));
+          //
+          //       if (index == questions.length) {
+          //         if (isLoading) {
+          //           return Center(child: CircularProgressIndicator());
+          //         } else {
+          //           return SizedBox.shrink();
+          //         }
+          //       }
+          //       return _buildItemWidget(questions[index]);
+          //     },
+          //     controller: _scrollController,
+          //   ),
+          // ),
         ],
-      )
+      ),
     );
   }
 }
+
+class ExampleBottomSheet extends StatelessWidget {
+  final bool isCreateSort;
+  final Function(bool) onSortChanged;
+
+  ExampleBottomSheet({
+    required this.isCreateSort,
+    required this.onSortChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: Text(
+            '정확도순',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Pretendard Variable',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: () {
+            if (!isCreateSort) {
+              onSortChanged(true);
+            }
+            Navigator.pop(context);
+          },
+        ),
+        Container(
+          width: 357.26,
+          child: Divider(
+            color: Colors.grey,
+            height: 1,
+          ),
+        ),
+        ListTile(
+          title: Text(
+            '최근 조회순 ',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Pretendard Variable',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: () {
+            if (isCreateSort) {
+              onSortChanged(false);
+            }
+            Navigator.pop(context);
+          },
+        ),
+        Container(
+          width: 357.26,
+          child: Divider(
+            color: Colors.grey,
+            height: 1,
+          ),
+        ),
+        // Divider(
+        //   color: Colors.grey, // 밑줄의 색상 설정
+        //   height: 1, // 밑줄의 높이 설정
+        // ),
+        ListTile(
+          title: Text(
+            '최신 답변순',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Pretendard Variable',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: () {
+            if (isCreateSort) {
+              onSortChanged(false);
+            }
+            Navigator.pop(context);
+          },
+        ),
+        Container(
+          width: 357.26,
+          child: Divider(
+            color: Colors.grey,
+            height: 1,
+          ),
+        ),
+
+        ListTile(
+          title: Text(
+            '최신 질문순',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Pretendard Variable',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: () {
+            if (isCreateSort) {
+              onSortChanged(false);
+            }
+            Navigator.pop(context);
+          },
+        ),
+
+        Container(
+          width: 357.26,
+          child: Divider(
+            color: Colors.grey,
+            height: 1,
+          ),
+        ),
+        ListTile(
+          title: Text(
+            '좋아요 많은순',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Pretendard Variable',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: () {
+            if (isCreateSort) {
+              onSortChanged(false);
+            }
+            Navigator.pop(context);
+          },
+        ),
+
+        Container(
+          width: 357.26,
+          child: Divider(
+            color: Colors.grey,
+            height: 1,
+          ),
+        ),
+        ListTile(
+          title: Text(
+            '댓글 많은순',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Pretendard Variable',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: () {
+            if (isCreateSort) {
+              onSortChanged(false);
+            }
+            Navigator.pop(context);
+          },
+        )
+      ],
+    );
+  }
+}
+
+

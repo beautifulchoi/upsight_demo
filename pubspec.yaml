@@ -70,6 +70,7 @@ flutter:
     - images/apple.png
     - images/kakao.png
     - images/naver.png
+    - images/profile.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

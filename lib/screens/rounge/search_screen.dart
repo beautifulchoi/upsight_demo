@@ -17,6 +17,7 @@ class _SearchScreenState extends State<SearchScreen> {
   QuestionFirebase questionFirebase = QuestionFirebase();
   // 검색된 게시글의 document Id를 저장할 변수
   late String documentId;
+  late DocumentSnapshot document;
 
   @override
   void initState() {
@@ -170,13 +171,14 @@ class _SearchScreenState extends State<SearchScreen> {
                           .get();
 
                       if (snapshot.docs.isNotEmpty) {
+                        DocumentSnapshot document = snapshot.docs.first;
                         documentId = snapshot.docs.first.id;
                       }
 
                       // 게시글의 상세화면을 보여주는 screen으로 화면 전환(인자: 해당 게시글 데이터, 해당 게시글의 document Id)
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (BuildContext context) => DetailScreen(data: searchBoardResult[index], dataId: documentId,),),
+                            builder: (BuildContext context) => DetailScreen(data: searchBoardResult[index], dataId: documentId, dataDoc: document),),
                       );
                     },
                   );

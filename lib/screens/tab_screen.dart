@@ -1,3 +1,5 @@
+import 'package:board_project/screens/activity/my_activity_screen.dart';
+import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
 import 'package:board_project/screens/space/building_board_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -11,10 +13,10 @@ class _TabScreenState extends State<TabScreen> {
 
   List _pages = [
     Text('홈'),
-    Text('라운지'),
+    InfiniteScrollPage(),
     BuildingBoardScreen(),
     Text('캘린더'),
-    Text('내 활동'),
+    MyActivityScreen(),
   ];
   
   @override
@@ -28,7 +30,7 @@ class _TabScreenState extends State<TabScreen> {
         unselectedItemColor: Color(0xFF9C9EA1),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.message), label: '라운지'),
+          BottomNavigationBarItem(icon: Icon(Icons.sms), label: '라운지'),
           BottomNavigationBarItem(icon: Icon(Icons.now_wallpaper), label:'공간기록'),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: '캘린더'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: '내 활동'),

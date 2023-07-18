@@ -11,6 +11,7 @@ import 'package:board_project/providers/question_firestore.dart';
 class ModifyScreen extends StatefulWidget {
   // detail_screen에서 전달받는 해당 question 데이터
   final Question data;
+
   ModifyScreen({required this.data});
 
   _ModifyScreenState createState() => _ModifyScreenState();
@@ -18,8 +19,10 @@ class ModifyScreen extends StatefulWidget {
 
 class _ModifyScreenState extends State<ModifyScreen> {
   QuestionFirebase questionFirebase = QuestionFirebase();
+
   // 전달받은 question 데이터 저장할 변수
   late Question questionData;
+
   // 전달받은 question 데이터의 DocumentSnapshot id 저장할 변수
   late String document;
 
@@ -60,8 +63,18 @@ class _ModifyScreenState extends State<ModifyScreen> {
       appBar: AppBar(
         // 뒤로가기 버튼 삭제
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.red,
-        title: Text('수정하기'),
+        backgroundColor: Colors.white,
+
+        title: Text(
+          '수정하기',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontFamily: 'Pretendard Variable',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       // appBar 아래 UI 구현 코드
       body: Container(
@@ -110,26 +123,33 @@ class _ModifyScreenState extends State<ModifyScreen> {
             OutlinedButton(
               onPressed: () async {
                 // 모든 필드가 작성되었는지 확인
-                if (questionData.title.isNotEmpty && questionData.content.isNotEmpty && questionData.author.isNotEmpty && questionData.category.isNotEmpty) {
+                if (questionData.title.isNotEmpty &&
+                    questionData.content.isNotEmpty &&
+                    questionData.author.isNotEmpty &&
+                    questionData.category.isNotEmpty) {
                   // 입력받은 데이터로 새로운 question 데이터 생성하여 DB에 업데이트
                   Question newQuestion = Question(
-                      title: questionData.title,
-                      content: questionData.content,
-                      author: questionData.author,
-                      create_date: questionData.create_date,
-                      modify_date: DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
-                      category: questionData.category,
-                      views_count: questionData.views_count,
-                      isLikeClicked: questionData.isLikeClicked,
-                      reference: questionData.reference,
+                    title: questionData.title,
+                    content: questionData.content,
+                    author: questionData.author,
+                    create_date: questionData.create_date,
+                    modify_date:
+                    DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
+                    category: questionData.category,
+                    views_count: questionData.views_count,
+                    isLikeClicked: questionData.isLikeClicked,
+                    reference: questionData.reference,
                   );
                   await questionFirebase.updateQuestion(newQuestion);
-                  await questionFirebase.questionReference.doc(document).update({
+                  await questionFirebase.questionReference
+                      .doc(document)
+                      .update({
                     'title': questionData.title,
                     'content': questionData.content,
                     'author': questionData.author,
                     'create_date': questionData.create_date,
-                    'modify_date': DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
+                    'modify_date':
+                    DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
                     'category': questionData.category,
                     'views_count': questionData.views_count,
                     'isLikeClicked': questionData.isLikeClicked,
@@ -162,7 +182,7 @@ class _ModifyScreenState extends State<ModifyScreen> {
             // 게시글 수정 취소 버튼
             OutlinedButton(
               onPressed: () {
-                // 게시물 list screen으로 전환(현재 infinite_scroll_page)
+                // 게시물 list screen으로 전환(현재 infinite_scroll_page)감
                 Navigator.pushNamed(context, '/test');
               },
               child: Text('취소'),

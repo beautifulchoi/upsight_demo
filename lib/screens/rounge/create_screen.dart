@@ -43,9 +43,18 @@ class _CreateScreenState extends State<CreateScreen> {
       // appBar 구현 코드
       appBar: AppBar(
         // 뒤로가기 버튼 삭제
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.red,
-        title: Text('글 쓰기'),
+        // automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          title: Text(
+            '글 작성하기',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontFamily: 'Pretendard Variable',
+              fontWeight: FontWeight.w600,
+            ),
+          )
       ),
       // appBar 아래 UI 구현 코드
       body: Container(
@@ -82,8 +91,10 @@ class _CreateScreenState extends State<CreateScreen> {
             ),
             SizedBox(height: 16),
             // 게시글 작성 완료 버튼
-            OutlinedButton(
-              onPressed: () {
+            GestureDetector(
+
+              onTap: () {
+                // 버튼을 눌렀을 때 수행할 동작 추가
                 // 모든 필드가 작성되었는지 확인
                 if (title.isNotEmpty && content.isNotEmpty && category.isNotEmpty) {
                   // 입력받은 데이터로 새로운 question 데이터 생성하여 DB에 생성
@@ -122,16 +133,73 @@ class _CreateScreenState extends State<CreateScreen> {
                   );
                 }
               },
-              child: Text('완료'),
-            ),
+              child: Container(
+                width: 112.95,
+                height: 41.94,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: Container(
+                        width: 112.95,
+                        height: 41.94,
+                        decoration: ShapeDecoration(
+                          color: Color(0xFF628AAE),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 20.98,
+                      top: 9.64,
+                      child: SizedBox(
+                        width: 74.93,
+                        height: 28.64,
+                        child: Text(
+                          '입력완료',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'Pretendard Variable',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+
             // 게시글 작성 취소 버튼
-            OutlinedButton(
-              onPressed: () {
-                // 이전 화면인 게시물 list screen으로 전환(현재 infinite_scroll_page)
-                Navigator.of(context).pop();
-              },
-              child: Text('취소'),
-            ),
+            // OutlinedButton(
+            //   onPressed: () {
+            //     // 이전 화면인 게시물 list screen으로 전환(현재 infinite_scroll_page)
+            //     Navigator.of(context).pop();
+            //   },
+            //   style: ButtonStyle(
+            //     minimumSize: MaterialStateProperty.all(Size(8.12, 15.46)),
+            //     padding: MaterialStateProperty.all(EdgeInsets.zero),
+            //     backgroundColor: MaterialStateProperty.all(Colors.transparent),
+            //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            //       RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(0),
+            //       ),
+            //     ),
+            //   ),
+            //   child: Container(
+            //     width: 8.12,
+            //     height: 15.46,
+            //     child: Icon(
+            //       Icons.arrow_back,
+            //       color: Colors.black,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
