@@ -137,38 +137,47 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
       calendarStyle: CalendarStyle(
         // defaultDay 글자 설정
-          defaultTextStyle: TextStyle(
-            color: Color(0xFF585858),
-            fontSize: 14,
-            fontFamily: 'Pretendard Variable',
-            fontWeight: FontWeight.w400,
-          ),
-          // today 모양 설정
-          todayDecoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color(0xFF585858),
-          ),
-          // today 글자 설정
-          todayTextStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontFamily: 'Pretendard Variable',
-            fontWeight: FontWeight.w400,
-          ),
-          // outsideDay 노출 x
-          outsideDaysVisible: false,
-          // cell 내부 정렬
-          //cellAlignment: Alignment.topLeft,
-          // 가로선 설정
-          tableBorder: const TableBorder(
-              bottom: BorderSide(
-                color: Color(0xFFE5EAEF),
-              ),
-              horizontalInside: BorderSide(
-                  color: Color(0xFFE5EAEF)
-              )
-          ),
+        defaultTextStyle: TextStyle(
+          color: Color(0xFF585858),
+          fontSize: 14,
+          fontFamily: 'Pretendard Variable',
+          fontWeight: FontWeight.w400,
+        ),
+        // today 모양 설정
+        todayDecoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color(0xFF585858),
+        ),
+        // today 글자 설정
+        todayTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontFamily: 'Pretendard Variable',
+          fontWeight: FontWeight.w400,
+        ),
+        // outsideDay 노출 x
+        outsideDaysVisible: false,
+        // cell 내부 정렬
+        //cellAlignment: Alignment.topLeft,
+        // 가로선 설정
+        tableBorder: const TableBorder(
+            bottom: BorderSide(
+              color: Color(0xFFE5EAEF),
+            ),
+            horizontalInside: BorderSide(
+                color: Color(0xFFE5EAEF)
+            )
+        ),
       ),
+
+      // 임시 evet 설정
+      eventLoader: (day) {
+        if (day.day % 2 == 0) {
+          return ['hi'];
+        }
+        return [];
+      },
+
     );
   }
 }

@@ -39,8 +39,8 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
   late DocumentSnapshot document;
 
-  // 화면에 보여질 게시글 정렬 기준(true일 경우 생성일 순, false일 경우 조회수 순)
-  bool isCreateSort = true;
+  // 화면에 보여질 게시글 정렬 기준(조회순, 최신순, 좋아요순, 댓글순)
+  String sortFilter = '최신순';
 
   // 검색어 저장할 변수
   String searchText = '';
@@ -233,9 +233,20 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
   // 전체 question 목록을 보여주기 위한 함수
   Widget _totalItemWidget() {
+    print(questions);
     return ListView.builder(
       itemCount: questions.length + (isLastPage ? 0 : 1),
       itemBuilder: (BuildContext context, int index) {
+        if (sortFilter == '조회순') {
+          questions.sort((a, b) => b.views_count.compareTo(a.views_count));
+        } else if (sortFilter == '최신순') {
+          questions.sort((a, b) => b.create_date.compareTo(a.create_date));
+        } else if (sortFilter == '좋아요순') {
+
+        } else if (sortFilter == '댓글순') {
+
+        }
+
         // 현재 index가 questions 크기와 같은지 판별하는 코드
         if (index == questions.length) {
           // 로딩 중이라면 로딩 circle 보여줌
@@ -296,6 +307,16 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
             return ListView.builder(
               itemCount: searchBoardResult.length,
               itemBuilder: (BuildContext context, int index) {
+                if (sortFilter == '조회순') {
+                  questions.sort((a, b) => b.views_count.compareTo(a.views_count));
+                } else if (sortFilter == '최신순') {
+                  questions.sort((a, b) => b.create_date.compareTo(a.create_date));
+                } else if (sortFilter == '좋아요순') {
+
+                } else if (sortFilter == '댓글순') {
+
+                }
+
                 return _buildItemWidget(searchBoardResult[index]);
               },
               controller: _scrollController,
@@ -434,40 +455,40 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
               onFieldSubmitted: controlSearching,
             ),),
           // 정렬 기준
-          TextButton.icon(
-            icon: RotatedBox(
-              quarterTurns: 1,
-              // child: Icon(Icons.compare_arrows, size: 28),
-            ),
-            label: Text(
-              '정확도순',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontFamily: 'Pretendard Variable',
-                fontWeight: FontWeight.w400,
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              icon: Icon(Icons.swap_vert_sharp, color: Color(0xFF595959),),
+              label: Text(
+                sortFilter.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: 'Pretendard Variable',
+                  fontWeight: FontWeight.w400,
+                ),
               ),
+              onPressed: () {
+                showModalBottomSheet(
+                  backgroundColor: Colors.white,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ExampleBottomSheet(
+                      onSortChanged: (String sortFilter) {
+                        setState(() {
+                          this.sortFilter = sortFilter;
+                          questions.clear();
+                          lastDocument = null;
+                          isLastPage = false;
+                          fetchData();
+                        });
+                      },
+                    );
+                  },
+                );
+              },
             ),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return ExampleBottomSheet(
-                    isCreateSort: isCreateSort,
-                    onSortChanged: (bool isCreateSort) {
-                      setState(() {
-                        this.isCreateSort = isCreateSort;
-                        questions.clear();
-                        lastDocument = null;
-                        isLastPage = false;
-                        fetchData();
-                      });
-                    },
-                  );
-                },
-              );
-            },
           ),
           Divider(
             thickness: 1,
@@ -476,28 +497,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           Expanded(
               child: searchText.isEmpty ? _totalItemWidget() : _searchItemWidget()
           ),
-          // Expanded(
-          //   child: ListView.builder(
-          //     itemCount: questions.length + (isLastPage ? 0 : 1),
-          //     itemBuilder: (BuildContext context, int index) {
-          //       isCreateSort
-          //           ? questions.sort((a, b) =>
-          //           b.create_date.compareTo(a.create_date))
-          //           : questions.sort((a, b) =>
-          //           b.views_count.compareTo(a.views_count));
-          //
-          //       if (index == questions.length) {
-          //         if (isLoading) {
-          //           return Center(child: CircularProgressIndicator());
-          //         } else {
-          //           return SizedBox.shrink();
-          //         }
-          //       }
-          //       return _buildItemWidget(questions[index]);
-          //     },
-          //     controller: _scrollController,
-          //   ),
-          // ),
         ],
       ),
     );
@@ -505,11 +504,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 }
 
 class ExampleBottomSheet extends StatelessWidget {
-  final bool isCreateSort;
-  final Function(bool) onSortChanged;
+  final Function(String) onSortChanged;
 
   ExampleBottomSheet({
-    required this.isCreateSort,
     required this.onSortChanged,
   });
 
@@ -520,7 +517,7 @@ class ExampleBottomSheet extends StatelessWidget {
       children: [
         ListTile(
           title: Text(
-            '정확도순',
+            '조회순 ',
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -529,8 +526,8 @@ class ExampleBottomSheet extends StatelessWidget {
             ),
           ),
           onTap: () {
-            if (!isCreateSort) {
-              onSortChanged(true);
+            if (onSortChanged != '조회순') {
+              onSortChanged('조회순');
             }
             Navigator.pop(context);
           },
@@ -544,7 +541,7 @@ class ExampleBottomSheet extends StatelessWidget {
         ),
         ListTile(
           title: Text(
-            '최근 조회순 ',
+            '최신순',
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -553,8 +550,8 @@ class ExampleBottomSheet extends StatelessWidget {
             ),
           ),
           onTap: () {
-            if (isCreateSort) {
-              onSortChanged(false);
+            if (onSortChanged != '최신순') {
+              onSortChanged('최신순');
             }
             Navigator.pop(context);
           },
@@ -566,13 +563,9 @@ class ExampleBottomSheet extends StatelessWidget {
             height: 1,
           ),
         ),
-        // Divider(
-        //   color: Colors.grey, // 밑줄의 색상 설정
-        //   height: 1, // 밑줄의 높이 설정
-        // ),
         ListTile(
           title: Text(
-            '최신 답변순',
+            '좋아요순',
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -581,8 +574,8 @@ class ExampleBottomSheet extends StatelessWidget {
             ),
           ),
           onTap: () {
-            if (isCreateSort) {
-              onSortChanged(false);
+            if (onSortChanged != '좋아요순') {
+              onSortChanged('좋아요순');
             }
             Navigator.pop(context);
           },
@@ -594,10 +587,9 @@ class ExampleBottomSheet extends StatelessWidget {
             height: 1,
           ),
         ),
-
         ListTile(
           title: Text(
-            '최신 질문순',
+            '댓글순',
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -606,13 +598,12 @@ class ExampleBottomSheet extends StatelessWidget {
             ),
           ),
           onTap: () {
-            if (isCreateSort) {
-              onSortChanged(false);
+            if (onSortChanged != '댓글순') {
+              onSortChanged('댓글순');
             }
             Navigator.pop(context);
           },
         ),
-
         Container(
           width: 357.26,
           child: Divider(
@@ -620,48 +611,6 @@ class ExampleBottomSheet extends StatelessWidget {
             height: 1,
           ),
         ),
-        ListTile(
-          title: Text(
-            '좋아요 많은순',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontFamily: 'Pretendard Variable',
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          onTap: () {
-            if (isCreateSort) {
-              onSortChanged(false);
-            }
-            Navigator.pop(context);
-          },
-        ),
-
-        Container(
-          width: 357.26,
-          child: Divider(
-            color: Colors.grey,
-            height: 1,
-          ),
-        ),
-        ListTile(
-          title: Text(
-            '댓글 많은순',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontFamily: 'Pretendard Variable',
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          onTap: () {
-            if (isCreateSort) {
-              onSortChanged(false);
-            }
-            Navigator.pop(context);
-          },
-        )
       ],
     );
   }

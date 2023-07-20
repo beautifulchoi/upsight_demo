@@ -29,7 +29,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // router 코드 : 원래 /test 말고 /로 initialRoute 바꾸고 inifinte_scroll_page 코드를 boardscreen에 구현해야 함
       //initialRoute: '/',
       //initialRoute: '/auth',
       initialRoute: '/tab',
