@@ -41,6 +41,7 @@ dependencies:
   get: ^4.6.5
   table_calendar: ^3.0.9
   syncfusion_flutter_calendar: ^22.1.39
+  go_router: ^9.1.0
 
 dev_dependencies:
   flutter_test:

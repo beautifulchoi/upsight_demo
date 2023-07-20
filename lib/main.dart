@@ -1,4 +1,5 @@
 import 'package:board_project/screens/auth_screen.dart';
+import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
 import 'package:board_project/screens/tab_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/tab',
       routes: {
         //'/': (context) => BoardScreen(),
+        '/test': (context) => InfiniteScrollPage(),
         '/auth': (context) => AuthScreen(),
         '/tab': (context) => TabScreen(),
       },

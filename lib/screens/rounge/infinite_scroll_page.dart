@@ -204,6 +204,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         children: [
           Text(question.author),
           Text(question.create_date),
+          Text(question.views_count.toString()),
         ],
       ),
       onTap: () async {
@@ -233,7 +234,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
   // 전체 question 목록을 보여주기 위한 함수
   Widget _totalItemWidget() {
-    print(questions);
     return ListView.builder(
       itemCount: questions.length + (isLastPage ? 0 : 1),
       itemBuilder: (BuildContext context, int index) {
