@@ -45,6 +45,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   // 검색어 저장할 변수
   String searchText = '';
 
+  late int resetViews;
+  bool isresetViews = false;
+
   // _InfiniteScrollPageState가 생성될 때 호출(맨 처음에 한 번만 실행되는 초기화 함수)
   @override
   void initState() {
@@ -169,7 +172,11 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
       await questionFirebase.questionReference.doc(documentId).update({
         'views_count': FieldValue.increment(1),
       });
-      question.views_count += 1;
+
+      setState(() {
+        question.views_count += 1;
+        print("increaseViewsCount: ${question.views_count}");
+      });
     }
   }
 
@@ -197,6 +204,8 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
   // 게시글 목록을 보여줄 UI 위젯
   Widget _buildItemWidget(Question question) {
+    //print("_buildItemWidget: ${question.views_count}");
+    resetViews = question.views_count;
     return ListTile(
       title: Text(question.title),
       subtitle: Text(question.content),
@@ -204,7 +213,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         children: [
           Text(question.author),
           Text(question.create_date),
-          Text(question.views_count.toString()),
+          Text(resetViews.toString()),
         ],
       ),
       onTap: () async {
@@ -222,12 +231,22 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           document = snapshot.docs.first;
           documentId = document.id;
         }
+
         // 게시글의 상세화면을 보여주는 screen으로 화면 전환(인자: 해당 게시글 데이터, 해당 게시글의 document Id)
         await Navigator.of(context).push(
           MaterialPageRoute(
               builder: (BuildContext context) =>
                   DetailScreen(data: question, dataId: documentId, dataDoc: document)),
         );
+        isresetViews = true;
+        setState(() {
+          resetViews = (document.data() as Map<String, dynamic>)['views_count'];
+          print(resetViews);
+          if (question.views_count != resetViews) {
+            question.views_count = resetViews;
+          }
+          print("ㅋㅋ ${question.views_count}");
+        });
       },
     );
   }
@@ -257,6 +276,10 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
             return SizedBox.shrink();
           }
         }
+
+        isresetViews = false;
+        //print(questions[index].isLikeClicked);
+
         // 현재 index가 questions 크기보다 작다면 해당 순서의 building 데이터로 list 보여주는 함수 실행
         return Padding(padding: EdgeInsets.only(top: 3, bottom: 3, left: 15, right: 15), child: _buildItemWidget(questions[index]));
       },
@@ -277,6 +300,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           List<Question> searchBoardResult = [];
           snapshot.data!.docs.forEach((document) {
             Question question = Question.fromSnapshot(document);
+            //print('_searchItemWidget: ${question.views_count}');
             // 각 question를 순서대로 list에 추가
             searchBoardResult.add(question);
           });
@@ -304,9 +328,10 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
             );
           } else {
             // 검색된 결과들을 보여주는 UI 코드
-            return ListView.builder(
+            return ListView.builder (
               itemCount: searchBoardResult.length,
               itemBuilder: (BuildContext context, int index) {
+
                 if (sortFilter == '조회순') {
                   questions.sort((a, b) => b.views_count.compareTo(a.views_count));
                 } else if (sortFilter == '최신순') {
@@ -317,6 +342,11 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
                 }
 
+                if (resetViews != searchBoardResult[index].views_count && isresetViews) {
+                  searchBoardResult[index].views_count = resetViews;
+                }
+
+                //('searchBoardResult[index]: ${searchBoardResult[index].views_count}');
                 return _buildItemWidget(searchBoardResult[index]);
               },
               controller: _scrollController,
@@ -615,5 +645,3 @@ class ExampleBottomSheet extends StatelessWidget {
     );
   }
 }
-
-

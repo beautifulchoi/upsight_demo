@@ -391,8 +391,6 @@ class _DetailScreenState extends State<DetailScreen> {
                             // 조회수 보여주는 코드
                             Text(
                               (questionDoc.data() as Map<String, dynamic>)['views_count'].toString(),
-                              //question_snapshot!.docs[0]['views_count'].toString(),
-                              //questionData.views_count.toString(),
                               style: TextStyle(
                                 fontFamily: 'Pretendard Variable',
                                 // 원하는 폰트 패밀리로 변경
