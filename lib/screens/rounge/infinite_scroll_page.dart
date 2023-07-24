@@ -9,6 +9,7 @@ import 'package:board_project/models/question.dart';
 import 'package:board_project/screens/rounge/create_screen.dart';
 import 'package:board_project/screens/rounge/detail_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class InfiniteScrollPage extends StatefulWidget {
   @override
@@ -17,22 +18,22 @@ class InfiniteScrollPage extends StatefulWidget {
 
 class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   // DB에서 받아온 question 컬렉션 데이터 담을 list
-  List<Question> questions = [];
+  //List<Question> questions = [];
   QuestionFirebase questionFirebase = QuestionFirebase();
 
   // 임의로 지정할 user name, 추후 user model과 연결해야해서 DB 연결시켜야함
   late String user;
 
   // 화면에서 한 번에 보여줄 리스트 갯수, 밑으로 스크롤하면 해당 크기만큼 추가로 로딩됨
-  int pageSize = 20;
+  //int pageSize = 20;
   // 스크롤하여 가장 마지막에 로드된 question document 위치 저장하는 변수
-  DocumentSnapshot? lastDocument;
+  //DocumentSnapshot? lastDocument;
   // 데이터 로딩 중인지 유무 저장하는 변수
-  bool isLoading = false;
+  //bool isLoading = false;
   // DB에서 불러온 마지막 데이터인지 유무 저장하는 변수
-  bool isLastPage = false;
+  //bool isLastPage = false;
   // 스크롤컨트롤러 생성
-  ScrollController _scrollController = ScrollController();
+  //ScrollController _scrollController = ScrollController();
 
   // 게시글(question) 하나를 눌렀을 때 상세화면에 넘겨줄 해당 게시글 documentId
   late String documentId;
@@ -54,7 +55,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
     super.initState();
 
     // _scrollController에 리스너 추가
-    _scrollController.addListener(_scrollListener);
+    //_scrollController.addListener(_scrollListener);
     setState(() {
       questionFirebase.initDb();
       // Widget의 build 이후에 callback을 받기 위한 코드
@@ -62,7 +63,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         // 테스트용 코드 : DB에 데이터 한꺼번에 생성하는 함수
         //generateData();
         // DB 데이터 받아오는 함수
-        fetchData();
+        //fetchData();
       });
     });
     user = 'admin';
@@ -72,9 +73,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   @override
   void dispose() {
     // _scrollController에 리스너 삭제
-    _scrollController.removeListener(_scrollListener);
+    //_scrollController.removeListener(_scrollListener);
     // 스크롤컨트롤러 제거
-    _scrollController.dispose();
+    //_scrollController.dispose();
     super.dispose();
   }
 
@@ -98,6 +99,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
     }
   }
 
+  /*
   // DB 데이터 받아오는 함수
   Future<void> fetchData() async {
     // 로딩 중인지 DB에서 받아온 데이터가 마지막인지 확인
@@ -152,6 +154,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
       fetchData();
     }
   }
+   */
 
   // 조회수 증가시키는 함수
   Future<void> increaseViewsCount(Question question) async {
@@ -175,7 +178,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
       setState(() {
         question.views_count += 1;
-        print("increaseViewsCount: ${question.views_count}");
       });
     }
   }
@@ -204,7 +206,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
   // 게시글 목록을 보여줄 UI 위젯
   Widget _buildItemWidget(Question question) {
-    //print("_buildItemWidget: ${question.views_count}");
     resetViews = question.views_count;
     return ListTile(
       title: Text(question.title),
@@ -213,7 +214,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         children: [
           Text(question.author),
           Text(question.create_date),
-          Text(resetViews.toString()),
+          Text(question.views_count.toString()),
         ],
       ),
       onTap: () async {
@@ -241,33 +242,32 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         isresetViews = true;
         setState(() {
           resetViews = (document.data() as Map<String, dynamic>)['views_count'];
-          print(resetViews);
           if (question.views_count != resetViews) {
             question.views_count = resetViews;
           }
-          print("ㅋㅋ ${question.views_count}");
         });
       },
     );
   }
 
   // 전체 question 목록을 보여주기 위한 함수
-  Widget _totalItemWidget() {
+  Widget _totalItemWidget(List<Question> total_data) {
     return ListView.builder(
-      itemCount: questions.length + (isLastPage ? 0 : 1),
+      itemCount: total_data.length,
       itemBuilder: (BuildContext context, int index) {
         if (sortFilter == '조회순') {
-          questions.sort((a, b) => b.views_count.compareTo(a.views_count));
+          total_data.sort((a, b) => b.views_count.compareTo(a.views_count));
         } else if (sortFilter == '최신순') {
-          questions.sort((a, b) => b.create_date.compareTo(a.create_date));
+          total_data.sort((a, b) => b.create_date.compareTo(a.create_date));
         } else if (sortFilter == '좋아요순') {
 
         } else if (sortFilter == '댓글순') {
 
         }
 
+        /*
         // 현재 index가 questions 크기와 같은지 판별하는 코드
-        if (index == questions.length) {
+        if (index == total_data.length) {
           // 로딩 중이라면 로딩 circle 보여줌
           if (isLoading) {
             return Center(child: CircularProgressIndicator());
@@ -276,19 +276,23 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
             return SizedBox.shrink();
           }
         }
+         */
+
+        if (index == total_data.length) {
+          return SizedBox.shrink();
+        }
 
         isresetViews = false;
-        //print(questions[index].isLikeClicked);
 
         // 현재 index가 questions 크기보다 작다면 해당 순서의 building 데이터로 list 보여주는 함수 실행
-        return Padding(padding: EdgeInsets.only(top: 3, bottom: 3, left: 15, right: 15), child: _buildItemWidget(questions[index]));
+        return Padding(padding: EdgeInsets.only(top: 3, bottom: 3, left: 15, right: 15), child: _buildItemWidget(total_data[index]));
       },
-      controller: _scrollController,
+      //controller: _scrollController,
     );
   }
 
   // 검색된 question 목록을 보여주기 위한 함수
-  Widget _searchItemWidget() {
+  Widget _searchItemWidget(List<Question> total_data) {
     return FutureBuilder(
         future: searchResults,
         builder: (context, snapshot) {
@@ -300,7 +304,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           List<Question> searchBoardResult = [];
           snapshot.data!.docs.forEach((document) {
             Question question = Question.fromSnapshot(document);
-            //print('_searchItemWidget: ${question.views_count}');
             // 각 question를 순서대로 list에 추가
             searchBoardResult.add(question);
           });
@@ -333,9 +336,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
               itemBuilder: (BuildContext context, int index) {
 
                 if (sortFilter == '조회순') {
-                  questions.sort((a, b) => b.views_count.compareTo(a.views_count));
+                  searchBoardResult.sort((a, b) => b.views_count.compareTo(a.views_count));
                 } else if (sortFilter == '최신순') {
-                  questions.sort((a, b) => b.create_date.compareTo(a.create_date));
+                  searchBoardResult.sort((a, b) => b.create_date.compareTo(a.create_date));
                 } else if (sortFilter == '좋아요순') {
 
                 } else if (sortFilter == '댓글순') {
@@ -349,7 +352,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
                 //('searchBoardResult[index]: ${searchBoardResult[index].views_count}');
                 return _buildItemWidget(searchBoardResult[index]);
               },
-              controller: _scrollController,
+              //controller: _scrollController,
             );
           }
         }
@@ -359,6 +362,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   // 위젯을 만들고 화면에 보여주는 함수
   @override
   Widget build(BuildContext context) {
+    final List<Question> total_data = Provider.of<List<Question>>(context);
+    total_data.sort((a, b) => b.create_date.compareTo(a.create_date));
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -390,7 +396,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
               );
               if (newQuestion != null) {
                 setState(() {
-                  questions.insert(0, newQuestion);
+                  total_data.insert(0, newQuestion);
                 });
               }
             },
@@ -508,10 +514,10 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
                       onSortChanged: (String sortFilter) {
                         setState(() {
                           this.sortFilter = sortFilter;
-                          questions.clear();
-                          lastDocument = null;
-                          isLastPage = false;
-                          fetchData();
+                          // questions.clear();
+                          // lastDocument = null;
+                          // isLastPage = false;
+                          // fetchData();
                         });
                       },
                     );
@@ -525,7 +531,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           ),
           // 게시글 리스트
           Expanded(
-              child: searchText.isEmpty ? _totalItemWidget() : _searchItemWidget()
+              child: searchText.isEmpty ? _totalItemWidget(total_data) : _searchItemWidget(total_data)
           ),
         ],
       ),

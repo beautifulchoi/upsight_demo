@@ -4,18 +4,20 @@ import 'package:board_project/models/question.dart';
 import 'dart:async';
 
 class QuestionFirebase {
+  late FirebaseFirestore db;
   late CollectionReference questionReference;
   late Stream<QuerySnapshot> questionStream;
 
   Future initDb() async {
+    db = FirebaseFirestore.instance;
     questionReference = FirebaseFirestore.instance.collection('question');
     questionStream = questionReference.snapshots();
   }
 
-  List<Question> getQuestions(AsyncSnapshot<QuerySnapshot> snapshot) {
-    return snapshot.data!.docs.map((DocumentSnapshot document) {
-      return Question.fromSnapshot(document);
-    }).toList();
+  Stream <List<Question>> getQuestions() {
+    return questionReference.snapshots().map((list) =>
+        list.docs.map((doc) =>
+            Question.fromSnapshot(doc)).toList());
   }
 
   Future addQuestion(Question question) async {

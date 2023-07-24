@@ -1,9 +1,12 @@
+import 'package:board_project/models/question.dart';
+import 'package:board_project/providers/question_firestore.dart';
 import 'package:board_project/screens/auth_screen.dart';
 import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
 import 'package:board_project/screens/tab_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,26 +23,41 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+      const MyApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      @override
+      Widget build(BuildContext context) {
+      QuestionFirebase db = QuestionFirebase();
+
+      _initFirebase() async {
+      await db.initDb();
+    }
+
+    _initFirebase();
+
+    return MultiProvider(
+        providers: [
+         StreamProvider<List<Question>>.value(
+           value: db.getQuestions(), initialData: [],
+         ),
+        ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        //initialRoute: '/',
+        //initialRoute: '/auth',
+        initialRoute: '/tab',
+        routes: {
+          //'/': (context) => BoardScreen(),
+          '/test': (context) => InfiniteScrollPage(),
+          '/auth': (context) => AuthScreen(),
+          '/tab': (context) => TabScreen(),
+        },
+        //home: BoardScreen(),
       ),
-      //initialRoute: '/',
-      //initialRoute: '/auth',
-      initialRoute: '/tab',
-      routes: {
-        //'/': (context) => BoardScreen(),
-        '/test': (context) => InfiniteScrollPage(),
-        '/auth': (context) => AuthScreen(),
-        '/tab': (context) => TabScreen(),
-      },
-      //home: BoardScreen(),
     );
   }
 }
