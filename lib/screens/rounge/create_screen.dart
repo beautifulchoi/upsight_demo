@@ -3,6 +3,7 @@
  */
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:board_project/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import 'package:board_project/providers/question_firestore.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:board_project/providers/user_firestore.dart';
 
 
 class CreateScreen extends StatefulWidget {
@@ -18,6 +20,7 @@ class CreateScreen extends StatefulWidget {
 
 class _CreateScreenState extends State<CreateScreen> {
   QuestionFirebase questionFirebase = QuestionFirebase();
+  UserFirebase userFirebase = UserFirebase();
 
   // 새로 생성하는 question model의 각 필드 초기화
   String title = '';
@@ -28,6 +31,7 @@ class _CreateScreenState extends State<CreateScreen> {
   String category = '';
   int views_count = 0;
   bool isLikeClicked = false;
+  int answerCount = 0;
 
   // 임의로 지정할 user name, 추후 user model과 연결해야해서 DB 연결시켜야함
   late String user;
@@ -105,8 +109,22 @@ class _CreateScreenState extends State<CreateScreen> {
     super.initState();
     setState(() {
       questionFirebase.initDb();
+      userFirebase.initDb();
     });
-    user = 'admin';
+    // 'user_id' 값을 가져와서 'user' 변수에 할당
+    fetchUser();
+  }
+
+  // 사용자 데이터를 가져와서 'user' 변수에 할당하는 함수
+  Future<void> fetchUser() async {
+    final userSnapshot = await userFirebase.userReference.get();
+
+    if (userSnapshot.docs.isNotEmpty) {
+      final document = userSnapshot.docs.first;
+      setState(() {
+        user = (document.data() as Map<String, dynamic>)['user_id'];
+      });
+    }
   }
 
   // 위젯을 만들고 화면에 보여주는 함수
@@ -207,6 +225,7 @@ class _CreateScreenState extends State<CreateScreen> {
                       category: category,
                       views_count: views_count,
                       isLikeClicked: isLikeClicked,
+                      answerCount: answerCount,
                     );
                     questionFirebase.addQuestion(newQuestion).then((value) {
                       // 새로 생성된 데이터는 이전 화면인 게시물 list screen으로 전환되면서 전달됨(현재 infinite_scroll_page)

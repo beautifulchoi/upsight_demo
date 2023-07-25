@@ -3,6 +3,7 @@
  */
 
 import 'package:board_project/providers/answer_firestore.dart';
+import 'package:board_project/providers/user_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
@@ -27,6 +28,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   QuestionFirebase questionFirebase = QuestionFirebase();
   AnswerFirebase answerFirebase = AnswerFirebase();
+  UserFirebase userFirebase = UserFirebase();
 
   // 전달받은 question 데이터 저장할 변수
   late Question questionData;
@@ -65,9 +67,11 @@ class _DetailScreenState extends State<DetailScreen> {
     setState(() {
       questionFirebase.initDb();
       answerFirebase.initDb();
+      userFirebase.initDb();
       fetchQuestionData();
       // 해당 question의 answer 데이터의 snapshot 저장
       fetchData();
+      fetchUser();
     });
     user = 'admin';
   }
@@ -97,6 +101,16 @@ class _DetailScreenState extends State<DetailScreen> {
       // 해당 게시글(question)의 답변 목록 길이 저장
       answers_null_len = answer_snapshot!.docs.length;
     });
+  }
+
+  Future<void> fetchUser() async {
+    final userSnapshot = await userFirebase.userReference.get();
+    late DocumentSnapshot document;
+
+    if (userSnapshot.docs.isNotEmpty) {
+      document = userSnapshot.docs.first;
+    }
+    user = (document.data() as Map<String, dynamic>)['user_id'];
   }
 
   @override
@@ -476,6 +490,9 @@ class _DetailScreenState extends State<DetailScreen> {
                                           TextButton(
                                               child: Text('삭제'),
                                               onPressed: () async {
+                                                questionFirebase.questionReference.doc(questionId).update({
+                                                  'answerCount': FieldValue.increment(-1),});
+
                                                 QuerySnapshot snapshot = await answerFirebase.answerReference
                                                     .where('question', isEqualTo: answerData['question'])
                                                     .where('content', isEqualTo: answerData['content'])
@@ -508,7 +525,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         trailing: Column(
                           children: [
                             Text(answerData['create_date']),
-                            Text(answerData['modify_date']),
+                            //Text(answerData['modify_date']),
                           ],
                         ),
                       );
@@ -603,13 +620,15 @@ class _DetailScreenState extends State<DetailScreen> {
                         Answer newAnswer = Answer(
                           question: questionId,
                           content: commentText,
-                          author: 'guest',
-                          create_date: DateFormat('yy/MM/dd/HH/mm/ss')
-                              .format(DateTime.now()),
-                          modify_date: 'Null',
+                          author: user,
+                          create_date: DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
+                          //modify_date: 'Null',
                         );
                         // DB의 answer 컬렉션에 newAnswer document 추가
                         answerFirebase.addAnswer(newAnswer);
+                        questionFirebase.questionReference.doc(questionId).update({
+                          'answerCount': FieldValue.increment(1),
+                        });
                         // 댓글 입력창을 비웁니다.
                         _commentTextEditController.clear();
                         // 데이터를 다시 불러옵니다.

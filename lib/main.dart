@@ -1,13 +1,12 @@
-import 'package:board_project/models/question.dart';
-import 'package:board_project/providers/question_firestore.dart';
 import 'package:board_project/screens/auth_screen.dart';
 import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
 import 'package:board_project/screens/tab_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 void main() async {
   // calendar 한국어 설정을 위한 코드
@@ -23,40 +22,70 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-      const MyApp({super.key});
+  const MyApp({super.key});
 
-      @override
-      Widget build(BuildContext context) {
-      QuestionFirebase db = QuestionFirebase();
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      //initialRoute: '/',
+      //initialRoute: '/auth',
+      initialRoute: '/tab',
+      routes: {
+        //'/': (context) => BoardScreen(),
+        '/test': (context) => InfiniteScrollPage(),
+        '/auth': (context) => AuthScreen(),
+        '/tab': (context) => TabScreen(),
+      },
+      //home: BoardScreen(),
+    );
+  }
+}
 
-      _initFirebase() async {
-      await db.initDb();
-    }
 
-    _initFirebase();
 
-    return MultiProvider(
-        providers: [
-         StreamProvider<List<Question>>.value(
-           value: db.getQuestions(), initialData: [],
-         ),
-        ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        //initialRoute: '/',
-        //initialRoute: '/auth',
-        initialRoute: '/tab',
-        routes: {
-          //'/': (context) => BoardScreen(),
-          '/test': (context) => InfiniteScrollPage(),
-          '/auth': (context) => AuthScreen(),
-          '/tab': (context) => TabScreen(),
+class UserListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('사용자 목록'),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('데이터를 불러올 수 없습니다.'));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          // 사용자 목록을 ListView로 표시
+          return ListView(
+            children: snapshot.data!.docs.map((document) {
+              // document로부터 사용자 정보 추출
+              String userId = document['userId'];
+              String username = document['username'];
+              String email = document['email'];
+
+              // 사용자 정보를 ListTile로 표시
+              return ListTile(
+                title: Text(username),
+                subtitle: Text(email),
+                // 여기에 원하는 사용자 정보를 활용하는 코드 작성
+                onTap: () {
+                  // 사용자 정보를 활용한 다른 화면으로 이동 등의 동작 수행
+                },
+              );
+            }).toList(),
+          );
         },
-        //home: BoardScreen(),
       ),
     );
   }

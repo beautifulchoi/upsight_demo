@@ -139,6 +139,7 @@ class _ModifyScreenState extends State<ModifyScreen> {
                     views_count: questionData.views_count,
                     isLikeClicked: questionData.isLikeClicked,
                     reference: questionData.reference,
+                    answerCount: questionData.answerCount,
                   );
                   await questionFirebase.updateQuestion(newQuestion);
                   await questionFirebase.questionReference

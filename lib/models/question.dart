@@ -10,6 +10,8 @@ class Question {
   late int views_count;
   late bool isLikeClicked;
   late DocumentReference? reference;
+  late int answerCount;
+
 
   Question({
     required this.title,
@@ -20,8 +22,9 @@ class Question {
     required this.category,
     required this.views_count,
     required this.isLikeClicked,
+    required this.answerCount,
     this.reference,
-});
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -33,6 +36,7 @@ class Question {
       'category': category,
       'views_count': views_count,
       'isLikeClicked': isLikeClicked,
+      'answerCount': answerCount,
     };
   }
 
@@ -45,6 +49,7 @@ class Question {
     category = map?['category'];
     views_count = map?['views_count'];
     isLikeClicked = map?['isLikeClicked'];
+    answerCount = map?['answerCount'];
   }
 
 
@@ -58,6 +63,8 @@ class Question {
     category = map['category'];
     views_count = map['views_count'];
     isLikeClicked = map['isLikeClicked'];
+    answerCount = map['answerCount'];
+
     reference = document.reference;
   }
 }

@@ -1,25 +1,24 @@
 /*
-자유게시판 전체 게시글 보여주는 list page : 무한 스크롤 페이지네이션, 정렬 기능 구현
+Q&A 전체 게시글 보여주는 list page : 무한 스크롤 페이지네이션, 정렬 기능 구현
  */
 
 import 'package:board_project/providers/question_firestore.dart';
+import 'package:board_project/providers/user_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
 import 'package:board_project/screens/rounge/create_screen.dart';
 import 'package:board_project/screens/rounge/detail_screen.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:board_project/providers/user_firestore.dart';
 import 'package:board_project/models/user.dart';
-import 'qna_board_screen.dart';
+import 'infinite_scroll_page.dart';
 
-class InfiniteScrollPage extends StatefulWidget {
+class QnaBoardScreen extends StatefulWidget {
   @override
-  _InfiniteScrollPageState createState() => _InfiniteScrollPageState();
+  _QnaBoardScreenState createState() => _QnaBoardScreenState();
 }
 
-class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
+class _QnaBoardScreenState extends State<QnaBoardScreen> {
   // DB에서 받아온 question 컬렉션 데이터 담을 list
   List<Question> questions = [];
   QuestionFirebase questionFirebase = QuestionFirebase();
@@ -30,7 +29,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   UserFirebase userFirebase = UserFirebase(); // UserFirebase 클래스 인스턴스 생성
 
   //상단바 색상 초기 설정
-  String selectedTab = '자유게시판';
+  String selectedTab = '질문하기';
 
   // 화면에서 한 번에 보여줄 리스트 갯수, 밑으로 스크롤하면 해당 크기만큼 추가로 로딩됨
   int pageSize = 20;
@@ -218,22 +217,8 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   Widget _buildItemWidget(Question question) {
     resetViews = question.views_count;
     return ListTile(
-      title: Text(question.title,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontFamily: 'Pretendard Variable',
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      subtitle: Text(question.content,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontFamily: 'Pretendard Variable',
-          fontWeight: FontWeight.w300,
-        ),
-      ),
+      title: Text(question.title),
+      subtitle: Text(question.content),
       trailing: Column(
         children: [
           Text(question.author),
@@ -474,11 +459,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
                     setState(() {
                       selectedTab = '질문하기';
                     });
-
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => QnaBoardScreen()),
-
                     );
                   },
                   child: Text(
