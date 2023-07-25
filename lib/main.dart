@@ -1,13 +1,9 @@
-import 'package:board_project/screens/auth_screen.dart';
-import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
-import 'package:board_project/screens/tab_screen.dart';
+import 'package:board_project/router.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'constants/colors.dart';
 import 'firebase_options.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 void main() async {
   // calendar 한국어 설정을 위한 코드
@@ -28,21 +24,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'UpSight',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: KEY_BLUE),
         useMaterial3: true,
       ),
-      //initialRoute: '/',
-      initialRoute: '/auth',
-      //initialRoute: '/tab',
-      routes: {
-        //'/': (context) => BoardScreen(),
-        '/test': (context) => InfiniteScrollPage(),
-        '/auth': (context) => AuthScreen(),
-        '/tab': (context) => TabScreen(),
-      },
-      //home: BoardScreen(),
+      // Route를 관리하는 함수를 설정
+      onGenerateRoute: generateRoute,
+      initialRoute: authRoute, // 앱을 처음 시작할 때 표시할 첫 페이지 설정
     );
   }
 }
