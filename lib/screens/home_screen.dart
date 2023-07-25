@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -20,13 +22,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             width: 85,
             height: 21,
-            child: Image.asset('images/logo.png'),
+            child: Image.asset('assets/images/logo.png'),
           ),
           Padding(
             padding: EdgeInsets.only(left: 5, top: 16),
             child: Text('캘린더',
               style: TextStyle(
-                color: Colors.black,
+                color: BLACK,
                 fontSize: 20,
                 fontFamily: 'Pretendard Variable',
                 fontWeight: FontWeight.w500,
@@ -39,13 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 322,
               height: 61,
               decoration: ShapeDecoration(
-                color: Colors.white,
+                color: WHITE,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 shadows: [
                   BoxShadow(
-                    color: Color(0x11000000),
+                    color: BOX_SHADOW_COLOR,
                     blurRadius: 4,
                     offset: Offset(0, 0),
                     spreadRadius: 2,
@@ -58,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(left: 5, top: 16),
             child: Text('공간 이미지',
               style: TextStyle(
-                color: Colors.black,
+                color: BLACK,
                 fontSize: 20,
                 fontFamily: 'Pretendard Variable',
                 fontWeight: FontWeight.w500,
@@ -71,13 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 322,
               height: 133.55,
               decoration: ShapeDecoration(
-                color: Colors.white,
+                color: WHITE,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 shadows: [
                   BoxShadow(
-                    color: Color(0x11000000),
+                    color: BOX_SHADOW_COLOR,
                     blurRadius: 4,
                     offset: Offset(0, 0),
                     spreadRadius: 2,
@@ -90,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(left: 5, top: 16),
             child: Text('하자 보수 게시판 인기 글',
               style: TextStyle(
-                color: Colors.black,
+                color: BLACK,
                 fontSize: 20,
                 fontFamily: 'Pretendard Variable',
                 fontWeight: FontWeight.w500,
@@ -103,13 +105,13 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 322,
               height: 257.19,
               decoration: ShapeDecoration(
-                color: Colors.white,
+                color: WHITE,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 shadows: [
                   BoxShadow(
-                    color: Color(0x11000000),
+                    color: BOX_SHADOW_COLOR,
                     blurRadius: 4,
                     offset: Offset(0, 0),
                     spreadRadius: 2,

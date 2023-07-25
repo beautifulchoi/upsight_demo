@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
+
 class AuthScreen extends StatefulWidget {
   @override
   _AuthScreenState createState() => _AuthScreenState();
@@ -21,11 +23,11 @@ class _AuthScreenState extends State<AuthScreen> {
             Container(
               width: 316,
               height: 79,
-              child: Image.asset('images/logo.png'),
+              child: Image.asset('assets/images/logo.png'),
             ),
             Text('Upsight. CO., Ltd',
               style: TextStyle(
-                color: Color(0xFF75777C),
+                color: D_GREY,
                 fontSize: 16,
                 fontFamily: 'Pretendard Variable',
                 fontWeight: FontWeight.w500,
@@ -44,19 +46,21 @@ class _AuthScreenState extends State<AuthScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          primary: Colors.white,
+                          primary: WHITE,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/tab');
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: Row(
                             children: [
-                              Image.asset('images/google.png', width: 30),
+                              Image.asset('assets/images/google.png', width: 30),
                               SizedBox(width: 10),
                               Text(
                                 'Google로 계속하기',
                                 style: TextStyle(
-                                  color: Color(0xFF75777C),
+                                  color: D_GREY,
                                   fontSize: 12,
                                   fontFamily: 'Pretendard Variable',
                                   fontWeight: FontWeight.w500,
@@ -75,20 +79,22 @@ class _AuthScreenState extends State<AuthScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            primary: Colors.white,
+                            primary: WHITE,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/tab');
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Row(
                               children: [
-                                Image.asset('images/apple.png',
+                                Image.asset('assets/images/apple.png',
                                     width: 30),
                                 SizedBox(width: 10),
                                 Text(
                                   'Apple로 계속하기',
                                   style: TextStyle(
-                                    color: Color(0xFF75777C),
+                                    color: D_GREY,
                                     fontSize: 12,
                                     fontFamily: 'Pretendard Variable',
                                     fontWeight: FontWeight.w500,
@@ -107,19 +113,21 @@ class _AuthScreenState extends State<AuthScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            primary: Color(0xFFFFDC4C),
+                            primary:CALENDAR_YELLOW,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/tab');
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Row(
                               children: [
-                                Image.asset('images/kakao.png', width: 30),
+                                Image.asset('assets/images/kakao.png', width: 30),
                                 SizedBox(width: 10),
                                 Text(
                                   '카카오로 계속하기',
                                   style: TextStyle(
-                                    color: Color(0xFF75777C),
+                                    color: D_GREY,
                                     fontSize: 12,
                                     fontFamily: 'Pretendard Variable',
                                     fontWeight: FontWeight.w500,
@@ -140,12 +148,14 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                             primary: Color(0xFF1EC800),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/tab');
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Row(
                               children: [
-                                Image.asset('images/naver.png', width: 30),
+                                Image.asset('assets/images/naver.png', width: 30),
                                 SizedBox(width: 10),
                                 Text(
                                   '네이버로 계속하기',

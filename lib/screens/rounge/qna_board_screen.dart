@@ -11,6 +11,8 @@ import 'package:board_project/screens/rounge/create_screen.dart';
 import 'package:board_project/screens/rounge/detail_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:board_project/models/user.dart';
+import '../../constants/colors.dart';
+import '../../constants/size.dart';
 import 'infinite_scroll_page.dart';
 
 class QnaBoardScreen extends StatefulWidget {
@@ -32,7 +34,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
   String selectedTab = '질문하기';
 
   // 화면에서 한 번에 보여줄 리스트 갯수, 밑으로 스크롤하면 해당 크기만큼 추가로 로딩됨
-  int pageSize = 20;
+  int pageSize = COMMON_PAGE_SIZE;
   // 스크롤하여 가장 마지막에 로드된 question document 위치 저장하는 변수
   DocumentSnapshot? lastDocument;
   // 데이터 로딩 중인지 유무 저장하는 변수
@@ -54,7 +56,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
   String searchText = '';
 
   // 댓글 수 변수 정의
-  int totalAnswerCount = 0;
+  int totalAnswerCount = COMMON_INIT_COUNT;
   List<String> answers = [];
 
   late int resetViews;
@@ -104,7 +106,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
         'create_date': DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
         'modify_date': 'Null',
         'category': '$i번째 카테고리',
-        'views_count': 0,
+        'views_count': COMMON_INIT_COUNT,
         'isLikeClicked': false,
       });
     }
@@ -182,11 +184,11 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
 
       // 해당 question의 조회수를 증가된 값으로 업데이트
       await questionFirebase.questionReference.doc(documentId).update({
-        'views_count': FieldValue.increment(1),
+        'views_count': FieldValue.increment(INCREASE_COUNT),
       });
 
       setState(() {
-        question.views_count += 1;
+        question.views_count += INCREASE_COUNT;
       });
     }
   }
@@ -328,7 +330,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
                       '해당 게시글이 없어요',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.black,
+                          color: BLACK,
                           fontWeight: FontWeight.w500,
                           fontSize: 20
                       ),
@@ -387,7 +389,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
           width: 323.61,
           height: 49,
           decoration: ShapeDecoration(
-            color: Color(0xFF628AAE),
+            color: KEY_BLUE,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(23.50),
             ),
@@ -409,11 +411,11 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(width: 20,),
-                Icon(Icons.edit, color: Colors.white,),
+                Icon(Icons.edit, color: WHITE,),
                 SizedBox(width: 5,),
                 Text('게시판에 새 글을 작성해보세요.',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: WHITE,
                     fontSize: 14,
                     fontFamily: 'Pretendard Variable',
                     fontWeight: FontWeight.w600,
@@ -444,7 +446,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
                   child: Text(
                     '자유게시판',
                     style: TextStyle(
-                      color: selectedTab == '자유게시판' ? Colors.blue : Color(0xFF75777C),
+                      color: selectedTab == '자유게시판' ? KEY_BLUE : TEXT_GREY,
                       fontSize: 14,
                       fontFamily: 'Pretendard Variable',
                       fontWeight: FontWeight.w700,
@@ -467,7 +469,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
                   child: Text(
                     '질문하기',
                     style: TextStyle(
-                      color: selectedTab == '질문하기' ? Colors.blue : Color(0xFF75777C),
+                      color: selectedTab == '질문하기' ? KEY_BLUE : TEXT_GREY,
                       fontSize: 14,
                       fontFamily: 'Pretendard Variable',
                       fontWeight: FontWeight.w700,
@@ -486,13 +488,13 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
               decoration: InputDecoration(
                 hintText: '검색어를 입력해주세요.',
                 hintStyle: TextStyle(
-                  color: Color(0xFF9C9EA0),
+                  color: TEXT_GREY,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: WHITE,
                 contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
                 prefixIcon: Icon(Icons.search,),
                 suffixIcon: IconButton(
@@ -502,21 +504,21 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
                 // 폼 필드의 기본 테두리
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
-                  borderSide: BorderSide(color: Color(0x11000000),),
+                  borderSide: BorderSide(color: L_GREY,),
                 ),
                 // 폼 필드가 활성화되어 있을 때 적용되는 테두리
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
-                  borderSide: BorderSide(color: Color(0x11000000),),
+                  borderSide: BorderSide(color: L_GREY,),
                 ),
                 // 폼 필드 위에 마우스가 올라왔을 때 적용되는 테두리
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
-                  borderSide: BorderSide(color: Color(0x11000000),),
+                  borderSide: BorderSide(color: L_GREY,),
                 ),
               ),
               style: TextStyle(
-                  color: Colors.black
+                  color: BLACK
               ),
               // 키보드의 search 버튼을 누르면 게시물 검색 함수 실행
               textInputAction: TextInputAction.search,
@@ -526,7 +528,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
-              icon: Icon(Icons.swap_vert_sharp, color: Color(0xFF595959),),
+              icon: Icon(Icons.swap_vert_sharp, color: TEXT_GREY,),
               label: Text(
                 sortFilter.toString(),
                 textAlign: TextAlign.center,
@@ -587,7 +589,7 @@ class ExampleBottomSheet extends StatelessWidget {
           title: Text(
             '조회순 ',
             style: TextStyle(
-              color: Colors.black,
+              color:  BLACK,
               fontSize: 18,
               fontFamily: 'Pretendard Variable',
               fontWeight: FontWeight.w500,
@@ -603,7 +605,7 @@ class ExampleBottomSheet extends StatelessWidget {
         Container(
           width: 357.26,
           child: Divider(
-            color: Colors.grey,
+            color: D_GREY,
             height: 1,
           ),
         ),
@@ -611,7 +613,7 @@ class ExampleBottomSheet extends StatelessWidget {
           title: Text(
             '최신순',
             style: TextStyle(
-              color: Colors.black,
+              color: D_GREY,
               fontSize: 18,
               fontFamily: 'Pretendard Variable',
               fontWeight: FontWeight.w500,
@@ -627,7 +629,7 @@ class ExampleBottomSheet extends StatelessWidget {
         Container(
           width: 357.26,
           child: Divider(
-            color: Colors.grey,
+            color:D_GREY,
             height: 1,
           ),
         ),
@@ -635,7 +637,7 @@ class ExampleBottomSheet extends StatelessWidget {
           title: Text(
             '좋아요순',
             style: TextStyle(
-              color: Colors.black,
+              color: D_GREY,
               fontSize: 18,
               fontFamily: 'Pretendard Variable',
               fontWeight: FontWeight.w500,
@@ -651,7 +653,7 @@ class ExampleBottomSheet extends StatelessWidget {
         Container(
           width: 357.26,
           child: Divider(
-            color: Colors.grey,
+            color: D_GREY,
             height: 1,
           ),
         ),
@@ -659,7 +661,7 @@ class ExampleBottomSheet extends StatelessWidget {
           title: Text(
             '댓글순',
             style: TextStyle(
-              color: Colors.black,
+              color: D_GREY,
               fontSize: 18,
               fontFamily: 'Pretendard Variable',
               fontWeight: FontWeight.w500,
@@ -675,7 +677,7 @@ class ExampleBottomSheet extends StatelessWidget {
         Container(
           width: 357.26,
           child: Divider(
-            color: Colors.grey,
+            color: D_GREY,
             height: 1,
           ),
         ),

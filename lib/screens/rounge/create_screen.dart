@@ -13,6 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:board_project/providers/user_firestore.dart';
 
+import '../../constants/colors.dart';
+import '../../constants/size.dart';
+
 
 class CreateScreen extends StatefulWidget {
   _CreateScreenState createState() => _CreateScreenState();
@@ -29,9 +32,9 @@ class _CreateScreenState extends State<CreateScreen> {
   String create_date = '';
   String modify_date = 'Null';
   String category = '';
-  int views_count = 0;
+  int views_count = COMMON_INIT_COUNT;
   bool isLikeClicked = false;
-  int answerCount = 0;
+  int answerCount = COMMON_INIT_COUNT;
 
   // 임의로 지정할 user name, 추후 user model과 연결해야해서 DB 연결시켜야함
   late String user;
@@ -135,12 +138,12 @@ class _CreateScreenState extends State<CreateScreen> {
       appBar: AppBar(
         // 뒤로가기 버튼 삭제
         // automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
+          backgroundColor: WHITE,
           title: Text(
             '글 작성하기',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.black,
+              color: BLACK,
               fontSize: 20,
               fontFamily: 'Pretendard Variable',
               fontWeight: FontWeight.w600,
@@ -268,7 +271,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           width: 112.95,
                           height: 41.94,
                           decoration: ShapeDecoration(
-                            color: Color(0xFF628AAE),
+                            color: SUB_BLUE,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -285,7 +288,7 @@ class _CreateScreenState extends State<CreateScreen> {
                             '입력완료',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: WHITE,
                               fontSize: 20,
                               fontFamily: 'Pretendard Variable',
                               fontWeight: FontWeight.w700,

@@ -39,7 +39,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                     child: Row(
                       children: [
                         SizedBox(width: 25,),
-                        Image.asset('images/profile.png', width: 48.67),
+                        Image.asset('assets/images/profile.png', width: 48.67),
                         SizedBox(width: 13),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,

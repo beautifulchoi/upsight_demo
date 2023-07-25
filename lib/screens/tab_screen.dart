@@ -5,13 +5,16 @@ import 'package:board_project/screens/rounge/infinite_scroll_page.dart';
 import 'package:board_project/screens/space/building_board_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
+import '../constants/size.dart';
+
 class TabScreen extends StatefulWidget {
   @override
   _TabScreenState createState() => _TabScreenState();
 }
 
 class _TabScreenState extends State<TabScreen> {
-  int _selectedPageIndex = 0;
+  int _selectedPageIndex = COMMON_INIT_COUNT;
 
   List _pages = [
     HomeScreen(),
@@ -28,8 +31,9 @@ class _TabScreenState extends State<TabScreen> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onItemTapped,
         currentIndex: _selectedPageIndex,
-        fixedColor: Color(0xFF0F4C82),
-        unselectedItemColor: Color(0xFF9C9EA1),
+        fixedColor: KEY_BLUE,
+        unselectedItemColor: TEXT_GREY,
+        type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
           BottomNavigationBarItem(icon: Icon(Icons.sms), label: '라운지'),

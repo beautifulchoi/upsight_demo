@@ -12,6 +12,9 @@ import 'package:board_project/providers/question_firestore.dart';
 import 'package:board_project/models/answer.dart';
 import 'package:intl/intl.dart';
 
+import '../../constants/colors.dart';
+import '../../constants/size.dart';
+
 class DetailScreen extends StatefulWidget {
   // infinite_scroll_page에서 전달받는 해당 question 데이터
   final Question data;
@@ -52,7 +55,7 @@ class _DetailScreenState extends State<DetailScreen> {
   final _commentTextEditController = TextEditingController();
 
   // 해당 게시글(question)의 답변 목록 길이 초기화
-  int answers_null_len = 0;
+  int answers_null_len = COMMON_INIT_COUNT;
 
   @override
   void initState() {
@@ -124,11 +127,11 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: WHITE,
 
       // appBar 구현 코드
       appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: WHITE,
           title: Text(
             '임차인-자유게시판',
             textAlign: TextAlign.center,
@@ -202,7 +205,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   width: 112.95,
                                   height: 41.94,
                                   decoration: ShapeDecoration(
-                                    color: Color(0xFF0F4C82),
+                                    color: BLACK,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -253,7 +256,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                       'Edit post',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: L_GREY,
                                         fontSize: 20,
                                         fontFamily: 'Pretendard Variable',
                                         fontWeight: FontWeight.w700,
@@ -367,7 +370,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                       'Delete post',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: WHITE,
                                         fontSize: 20,
                                         fontFamily: 'Pretendard Variable',
                                         fontWeight: FontWeight.w700,
@@ -395,7 +398,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 'View  ',
                                 textAlign: TextAlign.justify,
                                 style: TextStyle(
-                                  color: Color(0xFF585858),
+                                  color: TEXT_GREY,
                                   fontSize: 10,
                                   fontFamily: 'Pretendard Variable',
                                   fontWeight: FontWeight.w300,
@@ -453,7 +456,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   thickness: 1,
                 ),
                 // 답변 목록이 null일 경우
-                answers_null_len == 0
+                answers_null_len == COMMON_INIT_COUNT
                     ? Center(
                   child: Text('아직 작성된 답변이 없습니다'),
                 )
@@ -491,7 +494,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                               child: Text('삭제'),
                                               onPressed: () async {
                                                 questionFirebase.questionReference.doc(questionId).update({
-                                                  'answerCount': FieldValue.increment(-1),});
+                                                  'answerCount': FieldValue.increment(DECREASE_COUNT),});
 
                                                 QuerySnapshot snapshot = await answerFirebase.answerReference
                                                     .where('question', isEqualTo: answerData['question'])
@@ -546,13 +549,13 @@ class _DetailScreenState extends State<DetailScreen> {
                     width: 348.84,
                     height: 54.22,
                     decoration: ShapeDecoration(
-                      color: Color(0xFFE5EAEF),
+                      color: L_GREY,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                       shadows: [
                         BoxShadow(
-                          color: Color(0x19000000),
+                          color: L_GREY,
                           blurRadius: 4,
                           offset: Offset(0, 0),
                           spreadRadius: 2,
@@ -578,7 +581,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         border: InputBorder.none,
                         hintText: '댓글을 입력해주세요',
                         hintStyle: TextStyle(
-                          color: Color(0xFF628AAE),
+                          color: SUB_BLUE,
                           fontSize: 14,
                           fontFamily: 'Pretendard Variable',
                           fontWeight: FontWeight.w300,
@@ -593,7 +596,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: IconButton(
                     icon: Icon(
                       Icons.send,
-                      color: Color(0xFF628AAE),
+                      color: SUB_BLUE,
                     ),
                     onPressed: () {
                       // 입력받은 answer 데이터
@@ -627,7 +630,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         // DB의 answer 컬렉션에 newAnswer document 추가
                         answerFirebase.addAnswer(newAnswer);
                         questionFirebase.questionReference.doc(questionId).update({
-                          'answerCount': FieldValue.increment(1),
+                          'answerCount': FieldValue.increment(INCREASE_COUNT),
                         });
                         // 댓글 입력창을 비웁니다.
                         _commentTextEditController.clear();

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../constants/colors.dart';
+
 class CalendarScreen extends StatefulWidget {
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
@@ -49,7 +51,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         titleCentered: true,
         formatButtonVisible: false,
         titleTextStyle: const TextStyle(
-          color: Colors.black,
+          color: BLACK,
           fontSize: 20,
           fontFamily: 'Pretendard Variable',
           fontWeight: FontWeight.w600,
@@ -71,7 +73,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             case 1:
               return Center(child: Text('월',
                 style: TextStyle(
-                  color: Color(0xFF585858),
+                  color: D_GREY,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
@@ -80,7 +82,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             case 2:
               return Center(child: Text('화',
                 style: TextStyle(
-                  color: Color(0xFF585858),
+                  color: D_GREY,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
@@ -89,7 +91,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             case 3:
               return Center(child: Text('수',
                 style: TextStyle(
-                  color: Color(0xFF585858),
+                  color: D_GREY,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
@@ -98,7 +100,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             case 4:
               return Center(child: Text('목',
                 style: TextStyle(
-                  color: Color(0xFF585858),
+                  color: D_GREY,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
@@ -107,7 +109,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             case 5:
               return Center(child: Text('금',
                 style: TextStyle(
-                  color: Color(0xFF585858),
+                  color: D_GREY,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
@@ -116,7 +118,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             case 6:
               return Center(child: Text('토',
                 style: TextStyle(
-                  color: Color(0xFF585858),
+                  color: D_GREY,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
@@ -125,7 +127,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             case 7:
               return Center(child: Text('일',
                 style: TextStyle(
-                  color: Color(0xFFDA5050),
+                  color: ALERT_RED,
                   fontSize: 14,
                   fontFamily: 'Pretendard Variable',
                   fontWeight: FontWeight.w400,
@@ -138,7 +140,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       calendarStyle: CalendarStyle(
         // defaultDay 글자 설정
         defaultTextStyle: TextStyle(
-          color: Color(0xFF585858),
+          color: D_GREY,
           fontSize: 14,
           fontFamily: 'Pretendard Variable',
           fontWeight: FontWeight.w400,
@@ -146,11 +148,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
         // today 모양 설정
         todayDecoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Color(0xFF585858),
+          color: D_GREY,
         ),
         // today 글자 설정
         todayTextStyle: TextStyle(
-          color: Colors.white,
+          color: WHITE,
           fontSize: 14,
           fontFamily: 'Pretendard Variable',
           fontWeight: FontWeight.w400,
@@ -162,10 +164,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         // 가로선 설정
         tableBorder: const TableBorder(
             bottom: BorderSide(
-              color: Color(0xFFE5EAEF),
+              color: WHITE,
             ),
             horizontalInside: BorderSide(
-                color: Color(0xFFE5EAEF)
+                color: WHITE
             )
         ),
       ),
