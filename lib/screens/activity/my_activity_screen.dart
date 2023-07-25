@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../constants/colors.dart';
+
 class MyActivityScreen extends StatefulWidget {
   @override
   _MyActivityScreenState createState() => _MyActivityScreenState();
@@ -19,13 +21,13 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
           width: 358,
           height: 205.75,
           decoration: ShapeDecoration(
-              color: Colors.white,
+              color: WHITE,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
               shadows: [
                 BoxShadow(
-                  color: Color(0x19000000),
+                  color: BOX_SHADOW_COLOR,
                   blurRadius: 4,
                   offset: Offset(0, 0),
                   spreadRadius: 2,
@@ -47,17 +49,17 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                           children: [
                             Text('사용자 01 - 임차인',
                               style: TextStyle(
-                                color: Color(0xFF0F4C82),
+                                color: BLACK,
                                 fontSize: 20,
                                 fontFamily: 'Pretendard Variable',
                                 fontWeight: FontWeight.w600,),),
                             Row(
                               children: [
-                                Icon(Icons.cached, color: Color(0xFF7DC2E0),),
+                                Icon(Icons.cached, color: SUB_BLUE,),
                                 SizedBox(width: 5),
                                 Text('프로필 전환',
                                   style: TextStyle(
-                                    color: Color(0xFF7DC2E0),
+                                    color: SUB_BLUE,
                                     fontSize: 14,
                                     fontFamily: 'Pretendard Variable',
                                     fontWeight: FontWeight.w400,
@@ -89,11 +91,11 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                               width: 55.39,
                               height: 55.39,
                               decoration: ShapeDecoration(
-                                color: Colors.white,
+                                color: WHITE,
                                 shape: OvalBorder(),
                                 shadows: [
                                   BoxShadow(
-                                    color: Color(0x19000000),
+                                    color: BOX_SHADOW_COLOR,
                                     blurRadius: 4,
                                     offset: Offset(0, 0),
                                     spreadRadius: 2,
@@ -106,7 +108,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                                   Positioned(
                                       child: Icon(
                                         Icons.pending_actions,
-                                        color: Color(0xFF585858),
+                                        color: SUB_BLUE,
                                       ))
                                 ],
                               ),
@@ -114,7 +116,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                           ),
                           Text('내 계약',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: D_GREY,
                               fontSize: 14,
                               fontFamily: 'Pretendard Variable',
                               fontWeight: FontWeight.w400,
@@ -133,11 +135,11 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                               width: 55.39,
                               height: 55.39,
                               decoration: ShapeDecoration(
-                                color: Colors.white,
+                                color: WHITE,
                                 shape: OvalBorder(),
                                 shadows: [
                                   BoxShadow(
-                                    color: Color(0x19000000),
+                                    color: BOX_SHADOW_COLOR,
                                     blurRadius: 4,
                                     offset: Offset(0, 0),
                                     spreadRadius: 2,
@@ -150,7 +152,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                                   Positioned(
                                       child: Icon(
                                         Icons.edit,
-                                        color: Color(0xFF585858),
+                                        color: SUB_BLUE,
                                       ))
                                 ],
                               ),
@@ -158,7 +160,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                           ),
                           Text('내 게시글',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: D_GREY,
                               fontSize: 14,
                               fontFamily: 'Pretendard Variable',
                               fontWeight: FontWeight.w400,
@@ -177,11 +179,11 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                               width: 55.39,
                               height: 55.39,
                               decoration: ShapeDecoration(
-                                color: Colors.white,
+                                color: WHITE,
                                 shape: OvalBorder(),
                                 shadows: [
                                   BoxShadow(
-                                    color: Color(0x19000000),
+                                    color: BOX_SHADOW_COLOR,
                                     blurRadius: 4,
                                     offset: Offset(0, 0),
                                     spreadRadius: 2,
@@ -194,7 +196,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                                   Positioned(
                                       child: Icon(
                                         Icons.messenger_outline,
-                                        color: Color(0xFF585858),
+                                        color: SUB_BLUE,
                                       ))
                                 ],
                               ),
@@ -202,7 +204,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                           ),
                           Text('내 댓글',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: D_GREY,
                               fontSize: 14,
                               fontFamily: 'Pretendard Variable',
                               fontWeight: FontWeight.w400,
@@ -221,11 +223,11 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                               width: 55.39,
                               height: 55.39,
                               decoration: ShapeDecoration(
-                                color: Colors.white,
+                                color: WHITE,
                                 shape: OvalBorder(),
                                 shadows: [
                                   BoxShadow(
-                                    color: Color(0x19000000),
+                                    color: BOX_SHADOW_COLOR,
                                     blurRadius: 4,
                                     offset: Offset(0, 0),
                                     spreadRadius: 2,
@@ -238,7 +240,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                                   Positioned(
                                       child: Icon(
                                         Icons.favorite_border,
-                                        color: Color(0xFF585858),
+                                        color: SUB_BLUE,
                                       ))
                                 ],
                               ),
@@ -246,7 +248,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                           ),
                           Text('내 좋아요',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: D_GREY,
                               fontSize: 14,
                               fontFamily: 'Pretendard Variable',
                               fontWeight: FontWeight.w400,
@@ -265,10 +267,10 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
           width: 384,
           height: 274.25,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: WHITE,
             boxShadow: [
               BoxShadow(
-                color: Color(0x19000000),
+                color: BOX_SHADOW_COLOR,
                 blurRadius: 4,
                 offset: Offset(0, 0),
                 spreadRadius: 2,
@@ -287,7 +289,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                       Text(
                         '사용자 정보',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: D_GREY,
                           fontSize: 16,
                           fontFamily: 'Pretendard Variable',
                           fontWeight: FontWeight.w400,
@@ -308,7 +310,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                       Text(
                         '설정',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: D_GREY,
                           fontSize: 16,
                           fontFamily: 'Pretendard Variable',
                           fontWeight: FontWeight.w400,
@@ -329,7 +331,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                       Text(
                         '공지사항',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: D_GREY,
                           fontSize: 16,
                           fontFamily: 'Pretendard Variable',
                           fontWeight: FontWeight.w400,
@@ -350,7 +352,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                       Text(
                         '서비스 정보',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: D_GREY,
                           fontSize: 16,
                           fontFamily: 'Pretendard Variable',
                           fontWeight: FontWeight.w400,
