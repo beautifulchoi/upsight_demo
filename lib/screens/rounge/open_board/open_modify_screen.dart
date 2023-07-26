@@ -8,18 +8,18 @@ import 'package:board_project/models/question.dart';
 import 'package:intl/intl.dart';
 import 'package:board_project/providers/question_firestore.dart';
 
-import '../../widgets/appbar_base.dart';
+import '../../../widgets/appbar_base.dart';
 
-class ModifyScreen extends StatefulWidget {
+class OpenModifyScreen extends StatefulWidget {
   // detail_screen에서 전달받는 해당 question 데이터
   final Question data;
 
-  ModifyScreen({required this.data});
+  OpenModifyScreen({required this.data});
 
-  _ModifyScreenState createState() => _ModifyScreenState();
+  _OpenModifyScreenState createState() => _OpenModifyScreenState();
 }
 
-class _ModifyScreenState extends State<ModifyScreen> {
+class _OpenModifyScreenState extends State<OpenModifyScreen> {
   QuestionFirebase questionFirebase = QuestionFirebase();
 
   // 전달받은 question 데이터 저장할 변수
@@ -63,7 +63,7 @@ class _ModifyScreenState extends State<ModifyScreen> {
     return Scaffold(
       // appBar 구현 코드
       appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(100),
+        preferredSize: Size.fromHeight(65),
         child: AppbarBase(title: '게시글 수정', back: true,),
       ),
       // appBar 아래 UI 구현 코드

@@ -23,12 +23,12 @@ class AppbarBase extends StatelessWidget {
           ),
         ),
       // 뒤로가기 버튼
-      leading:  IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          color: BLACK,
-          icon: Icon(Icons.arrow_back_ios_new)),
+      // leading: IconButton(
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //     color: BLACK,
+      //     icon: Icon(Icons.arrow_back_ios_new)),
     );
   }
 }

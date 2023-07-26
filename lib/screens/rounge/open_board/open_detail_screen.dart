@@ -7,16 +7,16 @@ import 'package:board_project/providers/user_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
-import 'package:board_project/screens/rounge/modify_screen.dart';
+import 'package:board_project/screens/rounge/open_board/open_modify_screen.dart';
 import 'package:board_project/providers/question_firestore.dart';
 import 'package:board_project/models/answer.dart';
 import 'package:intl/intl.dart';
 
-import '../../constants/colors.dart';
-import '../../constants/size.dart';
-import '../../widgets/appbar_base.dart';
+import '../../../constants/colors.dart';
+import '../../../constants/size.dart';
+import '../../../widgets/appbar_base.dart';
 
-class DetailScreen extends StatefulWidget {
+class OpenDetailScreen extends StatefulWidget {
   // infinite_scroll_page에서 전달받는 해당 question 데이터
   final Question data;
   // infinite_scroll_page에서 전달받는 해당 questionId 데이터
@@ -24,12 +24,12 @@ class DetailScreen extends StatefulWidget {
   // infinite_scroll_page에서 전달받는 해당 questionDoc 데이터
   final DocumentSnapshot dataDoc;
 
-  DetailScreen({required this.data, required this.dataId, required this.dataDoc});
+  OpenDetailScreen({required this.data, required this.dataId, required this.dataDoc});
 
-  _DetailScreenState createState() => _DetailScreenState();
+  _OpenDetailScreenState createState() => _OpenDetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _OpenDetailScreenState extends State<OpenDetailScreen> {
   QuestionFirebase questionFirebase = QuestionFirebase();
   AnswerFirebase answerFirebase = AnswerFirebase();
   UserFirebase userFirebase = UserFirebase();
@@ -130,7 +130,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       // appBar 구현 코드
       appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(100),
+          preferredSize: Size.fromHeight(65),
           child: AppbarBase(title: '자유게시판', back: true,),
       ),
       // appBar 아래 UI 구현 코드
@@ -217,7 +217,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                ModifyScreen(
+                                                OpenModifyScreen(
                                                     data: questionData),
                                           ),
                                         );

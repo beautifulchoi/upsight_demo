@@ -7,14 +7,14 @@ import 'package:board_project/providers/user_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
-import 'package:board_project/screens/rounge/create_screen.dart';
-import 'package:board_project/screens/rounge/detail_screen.dart';
+import 'package:board_project/screens/rounge/open_board/open_create_screen.dart';
+import 'package:board_project/screens/rounge/open_board/open_detail_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:board_project/models/user.dart';
-import '../../constants/colors.dart';
-import '../../constants/size.dart';
-import '../../widgets/appbar_base.dart';
-import 'infinite_scroll_page.dart';
+import '../../../constants/colors.dart';
+import '../../../constants/size.dart';
+import '../../../widgets/appbar_base.dart';
+import '../open_board/open_board_screen.dart';
 
 class QnaBoardScreen extends StatefulWidget {
   @override
@@ -250,7 +250,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
         await Navigator.of(context).push(
           MaterialPageRoute(
               builder: (BuildContext context) =>
-                  DetailScreen(data: question, dataId: documentId, dataDoc: document)),
+                  OpenDetailScreen(data: question, dataId: documentId, dataDoc: document)),
         );
         isresetViews = true;
         setState(() {
@@ -375,7 +375,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
     return Scaffold(
       // appBar 구현 코드
       appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(100),
+        preferredSize: Size.fromHeight(65),
         child: AppbarBase(title: '라운지', back: false,),
       ),
       floatingActionButton: Align(
@@ -393,7 +393,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
             onPressed: () async {
               final newQuestion = await Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (BuildContext context) => CreateScreen()),
+                    builder: (BuildContext context) => OpenCreateScreen()),
               );
               if (newQuestion != null) {
                 setState(() {
@@ -435,7 +435,7 @@ class _QnaBoardScreenState extends State<QnaBoardScreen> {
                     });
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => InfiniteScrollPage()),
+                      MaterialPageRoute(builder: (context) => OpenBoardScreen()),
                     );
                   },
                   child: Text(
