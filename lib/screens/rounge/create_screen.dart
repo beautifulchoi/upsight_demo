@@ -2,8 +2,6 @@
 게시글(question) 생성하는 page
  */
 
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:board_project/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +13,7 @@ import 'package:board_project/providers/user_firestore.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/size.dart';
+import '../../widgets/appbar_base.dart';
 
 
 class CreateScreen extends StatefulWidget {
@@ -135,21 +134,10 @@ class _CreateScreenState extends State<CreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar 구현 코드
-      appBar: AppBar(
-        // 뒤로가기 버튼 삭제
-        // automaticallyImplyLeading: false,
-          backgroundColor: WHITE,
-          title: Text(
-            '글 작성하기',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: BLACK,
-              fontSize: 20,
-              fontFamily: 'Pretendard Variable',
-              fontWeight: FontWeight.w600,
-            ),
-          )
-      ),
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(100),
+          child: AppbarBase(title: '게시글 작성', back: true,),
+        ),
       // appBar 아래 UI 구현 코드
       body: SingleChildScrollView(
         child: Container(

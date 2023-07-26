@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/size.dart';
+import '../../widgets/appbar_base.dart';
 
 class DetailScreen extends StatefulWidget {
   // infinite_scroll_page에서 전달받는 해당 question 데이터
@@ -73,7 +74,7 @@ class _DetailScreenState extends State<DetailScreen> {
       userFirebase.initDb();
       fetchQuestionData();
       // 해당 question의 answer 데이터의 snapshot 저장
-      fetchData();
+      fetchAnswerData();
       fetchUser();
     });
     user = 'admin';
@@ -95,7 +96,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   // 해당 question의 answer 데이터의 snapshot 저장하는 함수
-  Future<void> fetchData() async {
+  Future<void> fetchAnswerData() async {
     // 해당 question의 answer 데이터의 DocumentSnapshot() 찾아서 저장
     answer_snapshot = await answerFirebase.answerReference
         .where('question', isEqualTo: questionId)
@@ -127,21 +128,11 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: WHITE,
-
       // appBar 구현 코드
-      appBar: AppBar(
-          backgroundColor: WHITE,
-          title: Text(
-            '임차인-자유게시판',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontFamily: 'Pretendard Variable',
-              fontWeight: FontWeight.w600,
-            ),
-          )),
+      appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(100),
+          child: AppbarBase(title: '자유게시판', back: true,),
+      ),
       // appBar 아래 UI 구현 코드
       body: Column(
         children: [
@@ -635,7 +626,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         // 댓글 입력창을 비웁니다.
                         _commentTextEditController.clear();
                         // 데이터를 다시 불러옵니다.
-                        fetchData();
+                        fetchAnswerData();
                       }
                     },
                   ),

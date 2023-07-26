@@ -14,6 +14,7 @@ import 'package:board_project/providers/user_firestore.dart';
 import 'package:board_project/models/user.dart';
 import '../../constants/colors.dart';
 import '../../constants/size.dart';
+import '../../widgets/appbar_base.dart';
 import 'qna_board_screen.dart';
 
 class InfiniteScrollPage extends StatefulWidget {
@@ -405,16 +406,10 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text('라운지',
-          style: TextStyle(
-            color: BLACK,
-            fontSize: 20,
-            fontFamily: 'Pretendard Variable',
-            fontWeight: FontWeight.w600,),
-        ),
+      // appBar 구현 코드
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(100),
+        child: AppbarBase(title: '라운지', back: false,),
       ),
       floatingActionButton: Align(
         alignment: Alignment.bottomCenter,

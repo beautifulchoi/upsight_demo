@@ -8,7 +8,7 @@ import 'package:board_project/models/question.dart';
 import 'package:intl/intl.dart';
 import 'package:board_project/providers/question_firestore.dart';
 
-import '../../constants/colors.dart';
+import '../../widgets/appbar_base.dart';
 
 class ModifyScreen extends StatefulWidget {
   // detail_screen에서 전달받는 해당 question 데이터
@@ -62,21 +62,9 @@ class _ModifyScreenState extends State<ModifyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar 구현 코드
-      appBar: AppBar(
-        // 뒤로가기 버튼 삭제
-        automaticallyImplyLeading: false,
-        backgroundColor: L_GREY,
-
-        title: Text(
-          '수정하기',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: BLACK,
-            fontSize: 20,
-            fontFamily: 'Pretendard Variable',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(100),
+        child: AppbarBase(title: '게시글 수정', back: true,),
       ),
       // appBar 아래 UI 구현 코드
       body: Container(
