@@ -6,9 +6,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:board_project/providers/question_firestore.dart';
 
+import '../../../constants/colors.dart';
+import '../../../constants/size.dart';
 import '../../../widgets/appbar_base.dart';
+import '../../../widgets/divider_base.dart';
 
 class OpenModifyScreen extends StatefulWidget {
   // detail_screen에서 전달받는 해당 question 데이터
@@ -28,8 +34,76 @@ class _OpenModifyScreenState extends State<OpenModifyScreen> {
   // 전달받은 question 데이터의 DocumentSnapshot id 저장할 변수
   late String document;
 
-  _ModifyScreenState() {
+  _OpenModifyScreenState() {
     questionFirebase.initDb();
+  }
+
+  final List<File> _images = [];
+  final picker = ImagePicker();
+
+  // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져옴
+  getImage() async {
+    final List<XFile> images = await picker.pickMultiImage();
+    if (images != null) {
+      images.forEach((e) {
+        _images.add(File(e.path));
+      });
+
+      setState(() {});
+    }
+  }
+
+  // 이미지 삭제하는 함수
+  delImage(File image) {
+    _images.remove(image);
+  }
+
+  // 이미지를 보여주는 위젯
+  Widget showImage() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      child: GridView.count(
+        shrinkWrap: true,
+        crossAxisCount: 3,
+        crossAxisSpacing: 2.5,
+        children: _images.map((e) => _gridImage(e)).toList(),
+      ),
+    );
+  }
+
+  Widget _gridImage(File image) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              image: FileImage(image),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  delImage(image);
+                });
+              },
+              child: Container(
+                width: 20,
+                height: 20,
+                child: Icon(
+                  Icons.cancel,
+                  size: 15,
+                ),
+              ),
+            )
+        )
+      ],
+    );
   }
 
   @override
@@ -67,120 +141,163 @@ class _OpenModifyScreenState extends State<OpenModifyScreen> {
         child: AppbarBase(title: '게시글 수정', back: true,),
       ),
       // appBar 아래 UI 구현 코드
-      body: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              // title 값이 변경되었는지 확인하여 입력 받은 데이터 저장
-              onChanged: (value) {
-                questionData.title = value;
-              },
-              // 입력하려고 하면 작아지면서 위로 올라가는 애니메이션? UI 코드
-              decoration: InputDecoration(
-                hintText: questionData.title,
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              onChanged: (value) {
-                questionData.content = value;
-              },
-              decoration: InputDecoration(
-                hintText: questionData.content,
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              onChanged: (value) {
-                questionData.author = value;
-              },
-              decoration: InputDecoration(
-                hintText: questionData.author,
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              onChanged: (value) {
-                questionData.category = value;
-              },
-              decoration: InputDecoration(
-                hintText: questionData.category,
-              ),
-            ),
-            SizedBox(height: 16),
-            // 게시글 수정 완료 버튼
-            OutlinedButton(
-              onPressed: () async {
-                // 모든 필드가 작성되었는지 확인
-                if (questionData.title.isNotEmpty &&
-                    questionData.content.isNotEmpty &&
-                    questionData.author.isNotEmpty &&
-                    questionData.category.isNotEmpty) {
-                  // 입력받은 데이터로 새로운 question 데이터 생성하여 DB에 업데이트
-                  Question newQuestion = Question(
-                    title: questionData.title,
-                    content: questionData.content,
-                    author: questionData.author,
-                    create_date: questionData.create_date,
-                    modify_date:
-                    DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
-                    category: questionData.category,
-                    views_count: questionData.views_count,
-                    isLikeClicked: questionData.isLikeClicked,
-                    reference: questionData.reference,
-                    answerCount: questionData.answerCount,
-                  );
-                  await questionFirebase.updateQuestion(newQuestion);
-                  await questionFirebase.questionReference
-                      .doc(document)
-                      .update({
-                    'title': questionData.title,
-                    'content': questionData.content,
-                    'author': questionData.author,
-                    'create_date': questionData.create_date,
-                    'modify_date':
-                    DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
-                    'category': questionData.category,
-                    'views_count': questionData.views_count,
-                    'isLikeClicked': questionData.isLikeClicked,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.only(left: 16, right: 16),
+          child: Column(
+            children: [
+              DividerBase(),
+              TextFormField(
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: questionData.category,
+                    prefixText: '#',
+                    hintStyle: TextStyle(
+                      color: TEXT_GREY,
+                      fontSize: 16,
+                      fontFamily: 'Pretendard Variable',
+                      fontWeight: FontWeight.w300,
+                    )
+                ),
+                // category 값이 변경되었는지 확인하여 입력 받은 데이터 저장
+                onChanged: (value) {
+                  setState(() {
+                    questionData.category = value;
                   });
-                  // 수정된 question 데이터를 가지고 게시물 list screen으로 전환
-                  Navigator.pushNamed(context, '/test', arguments: newQuestion);
-                } else {
-                  // 작성되지 않은 필드가 있다면 dialog 띄움
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('입력 오류'),
-                        content: Text('모든 필드를 입력해주세요.'),
-                        actions: [
-                          TextButton(
-                            child: Text('확인'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
+                },
+              ),
+              DividerBase(),
+              TextFormField(
+                maxLength: MAX_TITLE_LENGTH,
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: questionData.title,
+                    hintStyle: TextStyle(
+                      color: TEXT_GREY,
+                      fontSize: 16,
+                      fontFamily: 'Pretendard Variable',
+                      fontWeight: FontWeight.w300,
+                    )
+                ),
+                // title 값이 변경되었는지 확인하여 입력 받은 데이터 저장
+                onChanged: (value) {
+                  setState(() {
+                    questionData.title = value;
+                  });
+                },
+              ),
+              DividerBase(),
+              TextFormField(
+                maxLines: MAX_LINE,
+                maxLength: MAX_CONTNET_LENGTH,
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: questionData.content,
+                    hintStyle: TextStyle(
+                      color: TEXT_GREY,
+                      fontSize: 16,
+                      fontFamily: 'Pretendard Variable',
+                      fontWeight: FontWeight.w300,
+                    )
+                ),
+                // content 값이 변경되었는지 확인하여 입력 받은 데이터 저장
+                onChanged: (value) {
+                  setState(() {
+                    questionData.content = value;
+                  });
+                },
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.add_photo_alternate_outlined),
+                    onPressed: () {
+                      getImage();
                     },
-                  );
-                }
-              },
-              child: Text('완료'),
-            ),
-            // 게시글 수정 취소 버튼
-            OutlinedButton(
-              onPressed: () {
-                // 게시물 list screen으로 전환(현재 infinite_scroll_page)감
-                Navigator.pushNamed(context, '/test');
-              },
-              child: Text('취소'),
-            ),
-          ],
+                  ),
+                ],
+              ),
+              showImage(),
+              DividerBase(),
+              // 게시글 수정 완료 버튼
+              GestureDetector(
+                onTap: () async {
+                  // 모든 필드가 작성되었는지 확인
+                  if (questionData.title.isNotEmpty && questionData.content.isNotEmpty && questionData.category.isNotEmpty) {
+                    // 입력받은 데이터로 새로운 question 데이터 생성하여 DB에 업데이트
+                    Question newQuestion = Question(
+                      title: questionData.title,
+                      content: questionData.content,
+                      author: questionData.author,
+                      create_date: questionData.create_date,
+                      modify_date:
+                      DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
+                      category: questionData.category,
+                      views_count: questionData.views_count,
+                      isLikeClicked: questionData.isLikeClicked,
+                      reference: questionData.reference,
+                      answerCount: questionData.answerCount,
+                    );
+                    await questionFirebase.updateQuestion(newQuestion);
+                    await questionFirebase.questionReference.doc(document).update({
+                      'title': questionData.title,
+                      'content': questionData.content,
+                      'author': questionData.author,
+                      'create_date': questionData.create_date,
+                      'modify_date':
+                      DateFormat('yy/MM/dd/HH/mm/ss').format(DateTime.now()),
+                      'category': questionData.category,
+                      'views_count': questionData.views_count,
+                      'isLikeClicked': questionData.isLikeClicked,
+                    });
+                    // 수정된 question 데이터를 가지고 게시물 list screen으로 전환
+                    Navigator.pushNamed(context, '/test', arguments: newQuestion);
+                  } else {
+                    // 작성되지 않은 필드가 있다면 dialog 띄움
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text('모든 필드를 입력해주세요.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: BLACK,
+                              fontSize: 18,
+                              fontFamily: 'Pretendard Variable',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              child: Text('확인'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 15, bottom: 15),
+                  child: Text(
+                    '수정 완료',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: TEXT_GREY,
+                      fontSize: 20,
+                      fontFamily: 'Pretendard Variable',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                )
+              ),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }

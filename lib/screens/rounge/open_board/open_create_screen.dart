@@ -214,7 +214,6 @@ class _OpenCreateScreenState extends State<OpenCreateScreen> {
                       getImage();
                     },
                   ),
-
                 ],
               ),
               showImage(),
@@ -251,8 +250,15 @@ class _OpenCreateScreenState extends State<OpenCreateScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('입력 오류'),
-                          content: Text('모든 필드를 입력해주세요.'),
+                          content: Text('모든 필드를 입력해주세요.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: BLACK,
+                              fontSize: 18,
+                              fontFamily: 'Pretendard Variable',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                           actions: [
                             TextButton(
                               child: Text('확인'),
@@ -272,7 +278,7 @@ class _OpenCreateScreenState extends State<OpenCreateScreen> {
                     '작성 완료',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFFA7ABAD),
+                      color: TEXT_GREY,
                       fontSize: 20,
                       fontFamily: 'Pretendard Variable',
                       fontWeight: FontWeight.w600,

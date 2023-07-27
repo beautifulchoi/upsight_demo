@@ -4,6 +4,7 @@
 
 import 'package:board_project/providers/answer_firestore.dart';
 import 'package:board_project/providers/user_firestore.dart';
+import 'package:board_project/widgets/dialog_base.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:board_project/models/question.dart';
@@ -294,9 +295,14 @@ class _OpenDetailScreenState extends State<OpenDetailScreen> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              title: Text('삭제하기'),
-                                              content: Container(
-                                                child: Text('삭제하시겠습니까?'),
+                                              content: Text('모든 필드를 입력해주세요.',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: BLACK,
+                                                  fontSize: 18,
+                                                  fontFamily: 'Pretendard Variable',
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                               actions: [
                                                 TextButton(
@@ -475,14 +481,48 @@ class _OpenDetailScreenState extends State<OpenDetailScreen> {
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('삭제하기'),
-                                        content: Container(
-                                          child: Text('삭제하시겠습니까?'),
-                                        ),
+                                      return DialogBase(
+                                        title: '선택하신 댓글을 삭제하시겠습니까?',
                                         actions: [
                                           TextButton(
-                                              child: Text('삭제'),
+                                            style: ButtonStyle(
+                                              minimumSize: MaterialStateProperty.all(Size(114, 44)), // 버튼 크기 지정
+                                              backgroundColor: MaterialStateProperty.all(WHITE), // 배경색 변경
+                                              shape: MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                      side: BorderSide(width: 1, color: L_GREY,),
+                                                      borderRadius: BorderRadius.circular(4)
+                                                  )
+                                              ), // 모서리 둥글게 처리
+                                            ),
+                                            child: Text('아니오',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: TEXT_GREY,
+                                                fontSize: 18,
+                                                fontFamily: 'Pretendard Variable',
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                              style: ButtonStyle(
+                                                minimumSize: MaterialStateProperty.all(Size(114, 44)), // 버튼 크기 지정
+                                                backgroundColor: MaterialStateProperty.all(KEY_BLUE), // 배경색 변경
+                                                shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))), // 모서리 둥글게 처리
+                                              ),
+                                              child: Text('예',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: WHITE,
+                                                  fontSize: 18,
+                                                  fontFamily: 'Pretendard Variable',
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
                                               onPressed: () async {
                                                 questionFirebase.questionReference.doc(questionId).update({
                                                   'answerCount': FieldValue.increment(DECREASE_COUNT),});
@@ -499,12 +539,6 @@ class _OpenDetailScreenState extends State<OpenDetailScreen> {
                                                   Navigator.pushNamed(context, '/test');
                                                 }
                                               }),
-                                          TextButton(
-                                            child: Text('취소'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
                                         ],
                                       );
                                     });
