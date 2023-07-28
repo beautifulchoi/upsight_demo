@@ -47,30 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyA-FxTV0r3Nb5iI5RY6LUV9_QeYg7examE',
-    appId: '1:193431955629:web:e1ddafa7afacd9500e3e24',
-    messagingSenderId: '193431955629',
-    projectId: 'flutter-board-firebase-fcbbf',
-    authDomain: 'flutter-board-firebase-fcbbf.firebaseapp.com',
-    storageBucket: 'flutter-board-firebase-fcbbf.appspot.com',
-    measurementId: 'G-BKJ56YV86Z',
+    apiKey: 'AIzaSyCaJZ8wAiA15GUKzZUKkxDbE5T1Dm1EsVE',
+    appId: '1:980765740693:web:8e6c07e31616391a6c959c',
+    messagingSenderId: '980765740693',
+    projectId: 'flutter-upsightdemo',
+    authDomain: 'flutter-upsightdemo.firebaseapp.com',
+    storageBucket: 'flutter-upsightdemo.appspot.com',
+    measurementId: 'G-H6QZ2NLDHE',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCTbWyogkR19NixVBO_pOc3ynytIAgHToM',
-    appId: '1:193431955629:android:9757f0a8daf290090e3e24',
-    messagingSenderId: '193431955629',
-    projectId: 'flutter-board-firebase-fcbbf',
-    storageBucket: 'flutter-board-firebase-fcbbf.appspot.com',
+    apiKey: 'AIzaSyBSddTMOgFpArQYHWmyYTybPNJXSXWrNqk',
+    appId: '1:980765740693:android:1621ea8819a2ecce6c959c',
+    messagingSenderId: '980765740693',
+    projectId: 'flutter-upsightdemo',
+    storageBucket: 'flutter-upsightdemo.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAcmoujCSgt5Rl-WBFUNRTNItLygYEYrBA',
-    appId: '1:193431955629:ios:9943eaf8e8b95ca60e3e24',
-    messagingSenderId: '193431955629',
-    projectId: 'flutter-board-firebase-fcbbf',
-    storageBucket: 'flutter-board-firebase-fcbbf.appspot.com',
-    iosClientId: '193431955629-tjbmscs139j2ck95iup3blqr0jq9slbf.apps.googleusercontent.com',
+    apiKey: 'AIzaSyA9XS-2MWilsyq4z7GtFXIYljWtMez9nhY',
+    appId: '1:980765740693:ios:b2e36779002d55836c959c',
+    messagingSenderId: '980765740693',
+    projectId: 'flutter-upsightdemo',
+    storageBucket: 'flutter-upsightdemo.appspot.com',
+    iosClientId: '980765740693-lldbfc4968nc95rosrkd4h8hqeu99m44.apps.googleusercontent.com',
     iosBundleId: 'com.example.boardProject',
   );
 }
