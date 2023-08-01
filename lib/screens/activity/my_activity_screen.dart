@@ -3,7 +3,7 @@
  */
 
 import 'package:flutter/material.dart';
-
+import 'package:board_project/screens/login_secure.dart';
 import '../../constants/colors.dart';
 
 class MyActivityScreen extends StatefulWidget {
@@ -64,6 +64,25 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                                     fontFamily: 'Pretendard Variable',
                                     fontWeight: FontWeight.w400,
                                   ),),
+
+                                //로그아웃 임시 UI
+                                SizedBox(width: 5),
+                                TextButton(
+                                  onPressed: () {
+
+                                   //AuthManage().signOut();
+                                   logger.d("signOut");
+                                  },
+                                  child: Text(
+                                    '로그아웃',
+                                    style: TextStyle(
+                                      color: SUB_BLUE,
+                                      fontSize: 14,
+                                      fontFamily: 'Pretendard Variable',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ],

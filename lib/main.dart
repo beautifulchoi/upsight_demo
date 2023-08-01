@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'constants/colors.dart';
 import 'firebase_options.dart';
-
+import 'package:logger/logger.dart';
 void main() async {
   // calendar 한국어 설정을 위한 코드
   await initializeDateFormatting();
@@ -15,6 +15,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  var logger = Logger();
+  logger.d("Logger is working!");
 
   runApp(const MyApp());
 }
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'UpSight',
+      title: 'UpSight-tutorial',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: KEY_BLUE),
         useMaterial3: true,
