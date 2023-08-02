@@ -47,6 +47,7 @@ class FirebaseAuthProvider with ChangeNotifier{
         logger.i('Login successful for user: ${user.email}');
         logger.d('persist on');
         authPersistence();
+        notifyListeners();
         return AuthStatus.loginSuccess;
       } else {
         return AuthStatus.loginFail;
@@ -70,6 +71,7 @@ class FirebaseAuthProvider with ChangeNotifier{
   Future<void> signOut() async {
     await authClient.signOut();
     logger.d("로그아웃");
+    notifyListeners();
   }
 
   /// 회원가입, 로그인시 사용자 영속
@@ -93,24 +95,27 @@ class FirebaseAuthProvider with ChangeNotifier{
   }
 
   /// 현재 유저 정보 조회
-  User? getUser() {
+  Map<String, dynamic>? getUserAttributes() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Name, email address, and profile photo URL
       final name = user.displayName;
       final email = user.email;
       final photoUrl = user.photoURL;
 
-      // Check if user's email is verified
       final emailVerified = user.emailVerified;
-
-      // The user's ID, unique to the Firebase project. Do NOT use this value to
-      // authenticate with your backend server, if you have one. Use
-      // User.getIdToken() instead.
       final uid = user.uid;
+
+      return {
+        'name': name,
+        'email': email,
+        'photoUrl': photoUrl,
+        'emailVerified': emailVerified,
+        'uid': uid,
+      };
     }
-    return user;
+    return null;
   }
+
 
   /// 공급자로부터 유저 정보 조회
   User? getUserFromSocial() {

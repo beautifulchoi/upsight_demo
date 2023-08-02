@@ -15,9 +15,9 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Future<bool> checkLogin() async {
 
-    final authClient = Provider.of<FirebaseAuthProvider>(context, listen: false);
+    final auth = Provider.of<FirebaseAuthProvider>(context, listen: false);
     bool isLogin=false;
-    final user=authClient.authClient.currentUser;
+    final user=auth.user;
     logger.d("[*] 로그인 상태 : $user");
 
     if (user!=null) {

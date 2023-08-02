@@ -1,11 +1,11 @@
 /*
 내 활동 홈 화면
  */
-
 import 'package:flutter/material.dart';
 import 'package:board_project/screens/login_secure.dart';
 import '../../constants/colors.dart';
 import 'package:provider/provider.dart';
+
 class MyActivityScreen extends StatefulWidget {
   @override
   _MyActivityScreenState createState() => _MyActivityScreenState();
@@ -406,7 +406,7 @@ class _MyActivityScreenState extends State<MyActivityScreen> {
                         ..showSnackBar(
                           SnackBar(content: Text('로그아웃 되었습니다.')),
                         );
-                      Navigator.of(context).pushNamedAndRemoveUntil("/login", (route) => false);
+                      //Navigator.of(context).pushNamedAndRemoveUntil("/login", (route) => false);
                     },
                   ),
                 ],

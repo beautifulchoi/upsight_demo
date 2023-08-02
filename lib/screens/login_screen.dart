@@ -31,7 +31,7 @@ class LoginScreen extends StatelessWidget {
 class EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final loginField = Provider.of<LoginFieldModel>(context, listen: false);
+    final loginField = Provider.of<LoginFieldModel>(context);
     return Container(
       padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
       child: TextField(
@@ -52,7 +52,7 @@ class PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loginField = Provider.of<LoginFieldModel>(context, listen: false);
+    final loginField = Provider.of<LoginFieldModel>(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
       child: TextField(
