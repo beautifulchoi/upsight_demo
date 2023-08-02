@@ -75,5 +75,3 @@ class DefaultFirebaseOptions {
     iosBundleId: 'com.example.boardProject',
   );
 }
-
-ddddddddd
